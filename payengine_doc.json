@@ -2299,62 +2299,6 @@
         ]
       }
     },
-    "/report/transaction/download": {
-      "get": {
-        "tags": [
-          "Manage reports"
-        ],
-        "summary": "Download transaction report file",
-        "description": "Endpoint to download specific transactions report files.\n\n\nThe files that should be downloaded have to be referenced via query param transactionReportId.\n\n\nIn case of multiple transactionReportId the files will be returned as a zip file.\n\n\nIn case only one transactionReportId is referenced the plain file will be returned.\n",
-        "operationId": "downloadTransactionReports",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "List of transaction report ids",
-            "style": "form",
-            "explode": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response.",
-            "content": {}
-          },
-          "404": {
-            "description": "Not found caused by invalid input.",
-            "content": {
-              "text/csv": {
-                "schema": {
-                  "$ref": "#/components/schemas/TxReportNotFound"
-                }
-              },
-              "application/vnd.ms-excel": {
-                "schema": {
-                  "$ref": "#/components/schemas/TxReportNotFound"
-                }
-              },
-              "application/zip": {
-                "schema": {
-                  "$ref": "#/components/schemas/TxReportNotFound"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/batch/upload": {
       "post": {
         "tags": [
@@ -2467,48 +2411,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BatchNotFound"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "basicAuth": []
-          }
-        ]
-      }
-    },
-    "/batch/{batchId}/response/download": {
-      "get": {
-        "tags": [
-          "Manage batches"
-        ],
-        "summary": "Download batch response file",
-        "description": "Endpoint to download the response file for a specific batch file that was uploaded.\n\n\nThe batchId of the corresponding batch file that was uploaded has to be provided as an input parameter.\n",
-        "operationId": "downloadBatch",
-        "parameters": [
-          {
-            "name": "batchId",
-            "in": "path",
-            "description": "List of csv generated file when the uploaded file is successfully parsed.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response.",
-            "content": {}
-          },
-          "404": {
-            "description": "Not found caused by invalid input.",
-            "content": {
-              "text/csv": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatchResponseNotFound"
                 }
               }
             }
