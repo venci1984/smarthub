@@ -2299,58 +2299,6 @@
         ]
       }
     },
-    "/batch/upload": {
-      "post": {
-        "tags": [
-          "Manage batches"
-        ],
-        "summary": "Upload batch file",
-        "description": "Endpoint to upload a csv batch file.\n",
-        "operationId": "uploadBatch",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "properties": {
-                  "uploadedFile": {
-                    "type": "string",
-                    "description": "File with batch transactions",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatchResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatchUploadBadFile"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "basicAuth": []
-          }
-        ]
-      }
-    },
     "/batch": {
       "get": {
         "tags": [
