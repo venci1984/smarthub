@@ -1,0 +1,81 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Health API",
+    "description": "Service that provides information about the health status of the system"
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health API"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health API"
+        ],
+        "summary": "Get system health",
+        "description": "Endpoint to check the health status of the system.\n",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "The system health is successfully measured.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The health endpoint is disabled via configuration.",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "title": "HealthResponse",
+        "type": "object",
+        "properties": {
+          "systemHealth": {
+            "type": "string",
+            "description": "The aggregated system health",
+            "enum": [
+              "GOOD",
+              "BAD"
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      },
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "description": "Authorization: Bearer merchantId"
+      }
+    }
+  }
+}
