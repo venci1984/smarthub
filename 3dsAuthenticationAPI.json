@@ -1,0 +1,959 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "3DS Authentication API",
+    "description": "The 3DS Authentication API is providing all services needed to manage 3DS 1.0/2.0 authentication."
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "3DS Authentication API"
+    }
+  ],
+  "paths": {
+    "/payment-instruments/{paymentInstrumentId}/3ds-version": {
+      "post": {
+        "tags": [
+          "3DS Authentication API"
+        ],
+        "summary": "Create 3DS version info\n",
+        "description": "Endpoint to check the supported 3DS version and receive additional 3DS related information.\n",
+        "operationId": "getThreeDsVersionForPaymentInstrument",
+        "parameters": [
+          {
+            "name": "paymentInstrumentId",
+            "in": "path",
+            "description": "ID of the specific paymentinstrument.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Optional field to create 3DS Version",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThreeDsVersionRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreeDsVersionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreeDsVersionBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/browser-info": {
+      "post": {
+        "tags": [
+          "3DS Authentication API"
+        ],
+        "summary": "Store browser information\n",
+        "description": "Endpoint to store browser session information, the browser session information is usually collected via javascript.",
+        "operationId": "createBrowserInfo",
+        "requestBody": {
+          "description": "Request body to create a new paymentinstrument.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserInfo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/payment-instruments/{paymentInstrumentId}/3ds-version/{threeDsVersionId}/3ds-authentication": {
+      "post": {
+        "tags": [
+          "3DS Authentication API"
+        ],
+        "summary": "Create 3DS authentication\n",
+        "description": "Endpoint to create a standalone 3DS authentication for the given payment-instrument based on the 3DS version result\n",
+        "operationId": "createAuthenticationForPaymentInstrument",
+        "parameters": [
+          {
+            "name": "paymentInstrumentId",
+            "in": "path",
+            "description": "ID of the specific paymentinstrument.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "threeDsVersionId",
+            "in": "path",
+            "description": "ID of the specific 3DS version result.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body to create an authentication",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/creditcard/3ds-authentication/{threeDsAuthenticationId}": {
+      "get": {
+        "tags": [
+          "3DS Authentication API"
+        ],
+        "summary": "Get 3DS authentication result",
+        "description": "Endpoint to fetch the result details of a 3DS authentication.\n",
+        "operationId": "getThreeDsAuthentication",
+        "parameters": [
+          {
+            "name": "threeDsAuthenticationId",
+            "in": "path",
+            "description": "ID of the specific 3DS authentication.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ThreeDsVersionRequest": {
+        "title": "ThreeDsVersionRequest",
+        "type": "object",
+        "properties": {
+          "cardAcquirerRoutingTo": {
+            "$ref": "#/components/schemas/CardAcquirerRoutingToEnum"
+          }
+        },
+        "description": "Currently this include field to indicate the intended routing acquirer."
+      },
+      "ThreeDsVersionResponse": {
+        "title": "ThreeDsVersionResponse",
+        "required": [
+          "createdAt",
+          "id",
+          "modifiedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Payeninge identifier for the 3DS version object",
+            "example": "threedsversion_123abc456z"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "Timestamp when card check was initiated",
+            "example": 1562769950956
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "Timestamp when card check was modified",
+            "example": 1562769950956
+          },
+          "version": {
+            "type": "string",
+            "description": "Optional parameter showing the 3DS version if the card is enrolled for 3DS. Could be used also as indicator if the card is 3DS enrolled.",
+            "example": "2.0"
+          },
+          "specificData": {
+            "$ref": "#/components/schemas/ThreeDsVersionSpecificData"
+          },
+          "cardAcquirerRoutingTo": {
+            "$ref": "#/components/schemas/CardAcquirerRoutingToEnum"
+          }
+        },
+        "description": "The 3DS object which will be used for versioning."
+      },
+      "ThreeDsVersionBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/payment-instruments/paymentinstrument_asdfghjk/3ds-version"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "There is problem with 3DS version request."
+          },
+          "code": {
+            "type": "number",
+            "example": 25719
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          }
+        }
+      },
+      "BrowserInfo": {
+        "type": "object",
+        "properties": {
+          "acceptHeader": {
+            "type": "string",
+            "description": "Exact content of the HTTP accept headers as sent to the 3DS Requestor from the cardholder's browser. This field is limited to maximum 2048 characters and if the total length exceeds the limit, the 3DS Server truncates the excess portion.",
+            "example": "brw-accept-header"
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address of the browser as returned by the HTTP headers to the 3DS Requestor. The field is limited to maximum 45 characters and the accepted values are as following: - IPv4 address is represented in the dotted decimal format of 4 sets of decimal numbers separated by dots. The decimal number in each and every set is in the range 0 - 255. - IPv6 address is represented as eight groups of four hexadecimal digits, each group representing 16 bits (two octets). The groups are separated by colons (:).",
+            "example": "192.168.0.1"
+          },
+          "javaEnabled": {
+            "type": "boolean",
+            "description": "Boolean that represents the ability of the cardholder browser to execute Java.<br/> Value is returned from the navigator.javaEnabled property.",
+            "example": true
+          },
+          "language": {
+            "type": "string",
+            "description": "Value representing the browser language as defined in IETF BCP47. The value is limited to 1-8 characters.  Value is returned from navigator.language property.",
+            "example": "en-US"
+          },
+          "colorDepth": {
+            "maximum": 99,
+            "minimum": 1,
+            "type": "number",
+            "description": "Value representing the bit depth of the colour palette for displaying images, in bits per pixel. Obtained from Cardholder browser using the screen.colorDepth property.",
+            "example": 8
+          },
+          "screenHeight": {
+            "maximum": 999999,
+            "minimum": 1,
+            "type": "number",
+            "description": "Total height of the Cardholder's screen in pixels. Value is returned from the screen.height property.",
+            "example": 100
+          },
+          "screenWidth": {
+            "maximum": 999999,
+            "minimum": 1,
+            "type": "number",
+            "description": "Total width of the Cardholder's screen in pixels. Value is returned from the screen.width property.",
+            "example": 100
+          },
+          "timezone": {
+            "maximum": 99999,
+            "minimum": 1,
+            "type": "number",
+            "description": "Time difference between UTC time and the Cardholder browser local time, in minutes. The field is limited to 1-5 characters where the value is returned from the getTimezoneOffset() method.",
+            "example": 60
+          },
+          "userAgent": {
+            "maxLength": 2048,
+            "type": "string",
+            "description": "Exact content of the HTTP user-agent header.",
+            "example": "Chrome/71.0.3578.98"
+          },
+          "windowSize": {
+            "type": "string",
+            "description": "Dimensions of the challenge window that has been displayed to the Cardholder. The ACS shall reply with content that is formatted to appropriately render in this window to provide the best possible user experience. Preconfigured sizes are width X height in pixels of the window displayed in the Cardholder browser window. This is used only to prepare the CReq request and it is not part of the AReq flow. If not present it will be omitted. However, when sending the Challenge Request. Accepted values are:<br/> <br>01 -> 250 x 400<br/> <br>02 -> 390 x 400<br/> <br>03 -> 500 x 600<br/> <br>04 -> 600 x 400<br/> <br>05 -> Full screen",
+            "example": "05",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05"
+            ]
+          }
+        }
+      },
+      "BrowserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "browserInfoId": {
+            "type": "string",
+            "description": "Payengine identifier of the browser info object",
+            "example": "browserinfo_123xyz456a"
+          }
+        }
+      },
+      "AuthenticationRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of the authentication requested.<br><br/> PAYMENT_TRANSACTION: authentication with payment; the authentication is used for a normal payment transaction,<br><br/> RECURRING_TRANSACTION: authentication with payment; the authentication is used for an initial recurring payment transaction,<br><br/> RECURRING_CARDCHECK: authentication without payment; the authentication is used for a card check representing the initial recurring payment transaction,<br><br/> ADD_CARD: authentication without payment; the authentication is only used for the verification of stored card credentials, e.g. within a wallet",
+            "example": "PAYMENT_TRANSACTION",
+            "enum": [
+              "PAYMENT_TRANSACTION",
+              "RECURRING_TRANSACTION",
+              "RECURRING_CARDCHECK",
+              "ADD_CARD"
+            ]
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The identifier of a payengine customer.",
+            "example": "customer_abc123xyz1"
+          },
+          "shippingAddressId": {
+            "type": "string",
+            "description": "The identifier of a payengine address.",
+            "example": "address_abc123xyz1"
+          },
+          "billingAddressId": {
+            "type": "string",
+            "description": "The identifier of a payengine address.",
+            "example": "address_abc123xyz1"
+          },
+          "transactionData": {
+            "$ref": "#/components/schemas/AuthenticationTransactionData"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/Risk"
+          },
+          "browserInfoId": {
+            "type": "string",
+            "description": "Payengine identifier of the browser info object",
+            "example": "browserinfo_123abc456d"
+          },
+          "sdkInfoId": {
+            "type": "string",
+            "description": "Payengine identifier of the sdk info object",
+            "example": "sdkinfo_123abc456d"
+          },
+          "async": {
+            "$ref": "#/components/schemas/AuthenticationRequestAsync"
+          },
+          "forceChallenge": {
+            "type": "boolean",
+            "description": "Flag to force challenge for 3ds v2"
+          }
+        }
+      },
+      "AuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier of the 3DS authentication transaction generated by the Payengine",
+            "example": "authentication_def456abc9"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "Timestamp when the authentication was initiated.",
+            "example": 1562769950956
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "Timestamp when the authentication was modified.",
+            "example": 1562769950956
+          },
+          "paymentInstrumentId": {
+            "type": "string",
+            "description": "Identifier of the payment instrument used for the 3DS authentication.",
+            "example": "paymentinstrument_pkekrrl5ua"
+          },
+          "threeDsVersionId": {
+            "type": "string",
+            "description": "Identifier of the 3DS version info based on which the authentication was done.",
+            "example": "threedsversion_123def987a"
+          },
+          "authenticationResult": {
+            "$ref": "#/components/schemas/AuthenticationResult"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the authentication requested.<br/> PAYMENT_TRANSACTION: authentication with payment; the authentication is used for a normal payment transaction,<br/> RECURRING_TRANSACTION: authentication with payment; the authentication is used for an initial recurring payment transaction,<br/> RECURRING_CARDCHECK: authentication without payment; the authentication is used for a card check representing the initial recurring payment transaction,<br/> ADD_CARD: authentication without payment; the authentication is only used for the verification of stored card credentials, e.g. within a wallet",
+            "example": "PAYMENT_TRANSACTION",
+            "enum": [
+              "PAYMENT_TRANSACTION",
+              "RECURRING_TRANSACTION",
+              "RECURRING_CARDCHECK",
+              "ADD_CARD"
+            ]
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The identifier of a payengine customer.",
+            "example": "customer_abc123xyz1"
+          },
+          "shippingAddressId": {
+            "type": "string",
+            "description": "The identifier of a payengine address.",
+            "example": "address_abc123xyz1"
+          },
+          "billingAddressId": {
+            "type": "string",
+            "description": "The identifier of a payengine address.",
+            "example": "address_abc123xyz1"
+          },
+          "transactionData": {
+            "$ref": "#/components/schemas/AuthenticationTransactionData"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/Risk"
+          },
+          "browserInfoId": {
+            "type": "string",
+            "description": "Payengine identifier of the browser info object",
+            "example": "browserinfo_123abc456d"
+          },
+          "async": {
+            "$ref": "#/components/schemas/AuthenticationRequestAsync"
+          },
+          "forceChallenge": {
+            "type": "boolean",
+            "description": "Flag to force challenge for 3ds v2"
+          },
+          "cardAcquirerRoutingTo": {
+            "$ref": "#/components/schemas/CardAcquirerRoutingToEnum"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "This field is needed by the mobile sdk to initialize the challenge flow and should be returned both in the authentication response for standalone authentication <br/> and in the meta.threeDsdata.authenticationResult section of the order intent execution response. It's equivalent to threeDSServerTransID",
+            "example": "e302d01e-0a0e-4556-a8d2-64bd433170bc"
+          }
+        }
+      },
+      "AuthenticationRequestAsync": {
+        "type": "object",
+        "properties": {
+          "notificationUrl": {
+            "type": "string",
+            "description": "URL where the result of the 3DS transaction will be sent to",
+            "example": "https://my.notification.url"
+          },
+          "successUrl": {
+            "type": "string",
+            "description": "URL where the end customer will be redirected to in case of challenge flow using the generated redirectUrl succeeded",
+            "example": "https://my.success.url"
+          },
+          "failureUrl": {
+            "type": "string",
+            "description": "URL where the end customer will be redirected to in case of challenge flow using the generated redirectUrl failed",
+            "example": "https://my.failure.url"
+          }
+        },
+        "description": "An object containing the relevant URLs for asynchronous communication"
+      },
+      "AuthenticationResultErrorData": {
+        "type": "object",
+        "properties": {
+          "providerCode": {
+            "type": "string",
+            "description": "Original error code from the 3DS server or mpi",
+            "example": "301"
+          },
+          "providerMessage": {
+            "type": "string",
+            "description": "Original error message from the 3DS server or mpi",
+            "example": "TRANSACTION_ID_NOT_RECOGNIZED"
+          }
+        },
+        "description": "Object containing error information in case of error."
+      },
+      "CardAcquirerRoutingToEnum": {
+        "title": "cardAcquirerRoutingToEnum",
+        "type": "string",
+        "description": "Card specific parameter: The acquirer the card transaction should be routed to. This flagging can only be used if more than one acquirer is enabled for the merchant account.",
+        "enum": [
+          "concardis",
+          "nets"
+        ]
+      },
+      "ThreeDsVersionSpecificData": {
+        "title": "ThreeDsVersionSpecificData",
+        "type": "object",
+        "properties": {
+          "methodUrl": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The ACS URL that will be used by the 3DS Method, retrieved from the card range data repository (3DS 2.0 only).",
+            "example": "https://www.acs.com/script"
+          },
+          "base64EncodedThreeDsMethodData": {
+            "type": "string",
+            "description": "Base64 encoded JSON object containing 3DS Server Transaction ID and 3DS Method Notification URL. This value shall be used when communicating to the ACS 3DS Method URL. (3DS 2.0 only)",
+            "example": "YmFzZTY0RW5jb2RlZFRocmVlRHNNZXRob2REYXRh"
+          }
+        },
+        "description": "Generic object which will contain 3DS version specific data"
+      },
+      "AuthenticationTransactionData": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The amount of the purchase.<br/><br/> In case of an authentication without payment for recurring future payments this should include the expected total purchase amount.<br/><br/> The amount can be 0 for a RECURRING_CARDCHECK or ADD_CARD authentication.<br/><br/> The amount needs to be in the minor currency unit.",
+            "example": 1000
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "The currency of the purchase according to https://en.wikipedia.org/wiki/ISO_4217",
+            "example": "EUR"
+          },
+          "recurringExpiry": {
+            "type": "string",
+            "description": "Date after which no further authorizations shall be performed. This field is only required in case of an authentication for recurring payments.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "recurringFrequency": {
+            "type": "number",
+            "description": "Indicates the minimum number of days between authorizations. This field is only required in case of an authentication for recurring payments.",
+            "example": 30
+          }
+        },
+        "description": "Object containing transaction information"
+      },
+      "Risk": {
+        "type": "object",
+        "properties": {
+          "customerAccount": {
+            "$ref": "#/components/schemas/RiskCustomerAccount"
+          },
+          "shippingInfo": {
+            "$ref": "#/components/schemas/RiskShippingInfo"
+          },
+          "orderInfo": {
+            "$ref": "#/components/schemas/RiskOrderInfo"
+          }
+        },
+        "description": "An object containing information relevant for risk analysis on the issuere side."
+      },
+      "RiskCustomerAccount": {
+        "type": "object",
+        "properties": {
+          "accountIdentifier": {
+            "type": "string",
+            "description": "The account identifier at the merchant side.",
+            "example": "customer-abc123"
+          },
+          "creationDate": {
+            "type": "string",
+            "description": "The date when the customer opened the account with the merchant.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "lastChangeDate": {
+            "type": "string",
+            "description": "The date when the customer account with the merchant was last changed, including billing or shipping addres, new payment account or new user(s) added.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "changeIndicator": {
+            "type": "string",
+            "description": "Length of the time since the customer account information with the merchant was last changed, including billing or shipping addres, new payment account or new user(s) added.",
+            "example": "CHANGED_WITH_THIS_TRANSACTION",
+            "enum": [
+              "CHANGED_WITH_THIS_TRANSACTION",
+              "LESS_THAN_THIRTY_DAYS",
+              "THIRTY_TO_SIXTY_DAYS",
+              "MORE_THAN_SIXTY_DAYS"
+            ]
+          },
+          "lastPasswordChangeDate": {
+            "type": "string",
+            "description": "The date when the customer account with the merchant had a password change or account reset.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "passwordChangeIndicator": {
+            "type": "string",
+            "description": "Length of the time since the customer account information with the merchant had a password change or account reset.",
+            "example": "LESS_THAN_THIRTY_DAYS",
+            "enum": [
+              "NO_CHANGE",
+              "CHANGED_WITH_THIS_TRANSACTION",
+              "LESS_THAN_THIRTY_DAYS",
+              "THIRTY_TO_SIXTY_DAYS",
+              "MORE_THAN_SIXTY_DAYS"
+            ]
+          },
+          "authenticationMethod": {
+            "type": "string",
+            "description": "Mechanism used by the customer to authenticate to the merchant account.",
+            "example": "OWN_CREDENTIALS",
+            "enum": [
+              "GUEST",
+              "OWN_CREDENTIALS",
+              "FEDERATED_ID",
+              "ISSUER_CREDENTIALS",
+              "THIRD_PARTY_AUTH",
+              "FIDO_AUTHENTICATOR"
+            ]
+          },
+          "authenticationTimestamp": {
+            "type": "string",
+            "description": "Date and time in UTC of the customer authentication to the merchant account.",
+            "format": "date-time",
+            "example": "2019-07-10T15:04:09.722Z"
+          },
+          "shippingAddressUsageIndicator": {
+            "type": "string",
+            "description": "Indicates when the shipping address used for this transaction was first used with the merchant account.",
+            "example": "LESS_THAN_THIRTY_DAYS",
+            "enum": [
+              "FIRST_TIME",
+              "LESS_THAN_THIRTY_DAYS",
+              "THIRTY_TO_SIXTY_DAYS",
+              "MORE_THAN_SIXTY_DAYS"
+            ]
+          },
+          "shippingAddressFirstUsage": {
+            "type": "string",
+            "description": "Date when the shipping address used for this transaction was first used with the merchant.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "transactionCountLastDay": {
+            "type": "number",
+            "description": "Number of transactions (successful and abandoned) for this customer account with the merchant across all payment accounts in the previous 24 hours.",
+            "example": 1
+          },
+          "transactionCountLastYear": {
+            "type": "number",
+            "description": "Number of transactions (successful and abandoned) for this customer account with the merchant across all payment accounts in the previous year.",
+            "example": 10
+          },
+          "orderCountLast6Months": {
+            "type": "number",
+            "description": "Number of purchases with this cardholder account during the previous six months.",
+            "example": 5
+          },
+          "suspiciousActivity": {
+            "type": "boolean",
+            "description": "Indicates whether the merchant has experienced suspicious activity (including previous fraud) on the customer account.",
+            "example": false
+          },
+          "accountEqualsShippingName": {
+            "type": "boolean",
+            "description": "Indicates if the customer name on the account is identical to the shipping name used for this transaction.",
+            "example": true
+          },
+          "paymentAccountAgeIndicator": {
+            "type": "string",
+            "description": "Indicates the length of time that the payment account was enrolled in the customer account with the merchant.",
+            "enum": [
+              "NO_ACCOUNT",
+              "CREATED_WITH_THIS_TRANSACTION",
+              "LESS_THAN_THIRTY_DAYS",
+              "THIRTY_TO_SIXTY_DAYS",
+              "MORE_THAN_SIXTY_DAYS"
+            ]
+          },
+          "paymentAccountEnrollementDate": {
+            "type": "string",
+            "description": "Date that the payment account was enrolled in the customer account with the merchant.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          }
+        },
+        "description": "An object containing information about the customer account with the merchant."
+      },
+      "RiskShippingInfo": {
+        "type": "object",
+        "properties": {
+          "shippingEqualsBillingAddress": {
+            "type": "boolean",
+            "description": "Flag if the shipping address equals the billing address.",
+            "example": true
+          },
+          "shippingIndicator": {
+            "type": "string",
+            "description": "Indicates the shipping method chosen for the transaction. Merchants must choose the shipping indicator that most accurately describes the customer's specific transaction. If one or more items are included in the sale, use the shipping indicator for the physical goods, or if all digital goods, use the indicator that describes the most expensive item.",
+            "example": "SHIP_TO_BILLING_ADDRESS",
+            "enum": [
+              "SHIP_TO_BILLING_ADDRESS",
+              "SHIP_TO_VERIFIED_ADDRESS",
+              "SHIP_TO_DIFFERENT_ADDRESS",
+              "SHIP_TO_STORE",
+              "DIGITAL_GOODS",
+              "TICKETS_NOT_SHIPPED",
+              "OTHER"
+            ]
+          },
+          "deliveryTime": {
+            "type": "string",
+            "description": "Indicates the merchandise delivery timeframe.",
+            "example": "SAME_DAY",
+            "enum": [
+              "ELECTRONIC",
+              "SAME_DAY",
+              "OVERNIGHT",
+              "TWO_DAY_OR_MORE"
+            ]
+          },
+          "deliveryEmail": {
+            "type": "string",
+            "description": "For electronic delivery, the email address to which the merchandise was delivered.",
+            "example": "john@doe.com"
+          }
+        },
+        "description": "object containing information about the shipping details for this transaction."
+      },
+      "RiskOrderInfo": {
+        "type": "object",
+        "properties": {
+          "isReorder": {
+            "type": "boolean",
+            "description": "Indicates whether the cardholder is reordering previously purchased merchandise.",
+            "example": false
+          },
+          "preOrderIndicator": {
+            "type": "string",
+            "description": "Indicates whether Cardholder is placing an order for merchandise with a future availability or release date.",
+            "example": "MERCHANTDISE_AVAILABLE",
+            "enum": [
+              "MERCHANTDISE_AVAILABLE",
+              "FUTURE_AVAILABILITY"
+            ]
+          },
+          "preOrderDate": {
+            "type": "string",
+            "description": "For a pre-ordered purchase, the expected date that the merchandise will be available.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "orderType": {
+            "type": "string",
+            "description": "Identifies the type of transaction being authenticated. The values are derived from ISO 8583.<br> If this value is not provided, a default value of 01 is used.<br>\nAccepted values are: <br>01 -> Goods / Service purchase <br>03 -> Check Acceptance <br>10 -> Account Funding <br>11 -> Quasi-Cash Transaction <br>28 -> Prepaid activation and Loan",
+            "example": "01",
+            "enum": [
+              "01",
+              "03",
+              "10",
+              "11",
+              "28"
+            ]
+          }
+        },
+        "description": "object containing order information relevant for risk evaluation"
+      },
+      "AuthenticationResult": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Parameter indicating the version of the 3DS",
+            "example": "2.0"
+          },
+          "status": {
+            "type": "string",
+            "description": "Indicates whether a transaction qualifies as an authenticated transaction.<br/><br/> Y = authentication verificationsuccessful<br/> A = authentication attempted; not authenticated, but a proof of attempted authentication is provided<br/> C = challenge required; additional SCA authentication is required<br/> U = authentication could not be performed; technical or other problem<br/> R = authentication rejected; issuer is rejecting<br/> N = not authenticated; transaction denied",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "A",
+              "C",
+              "U",
+              "R",
+              "N"
+            ]
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "Conditional - present in case of 3DS 1.0 and challenge flow for 3DS 2.0 redirect URL leading to hosted page by Payengine used for Cardholder authentication (main flow for 3DS 1.0 and fallback flow in case of challenge for 3DS 2.0)",
+            "example": "https://link-the-hosted-challange.example"
+          },
+          "challengeData": {
+            "$ref": "#/components/schemas/ChallengeData"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "The transaction identifier from the 3DS authentication\n3DS 1.0: This will be the XID\n3DS 2.0: This will be the dsTransID",
+            "example": "d00b8de2-a2e4-11e9-a2a3-2a2ae2dbcce4"
+          },
+          "acsReferenceNumber": {
+            "type": "string",
+            "description": "Unique identifier assigned by the EMVCo Secretariat upon Testing and Approval. Set by the EMVCo Secretariat."
+          },
+          "acsSignedContent": {
+            "type": "string",
+            "description": "Contains the JWS object (represented as a string) created by the ACS for the ARes message. The body of JWS object (represented as a string) will contain the following data elements as defined • ACS URL • ACS Ephemeral Public Key (QT) • SDK Ephemeral Public Key (QC)"
+          },
+          "acsTransactionId": {
+            "type": "string",
+            "description": "Universally Unique transaction identifier assigned by the ACS to identify a single transaction. Canonical format as defined in IETF RFC 4122. May utilise any of the specified versions if the output meets specified requirements."
+          },
+          "authenticationValue": {
+            "type": "string",
+            "description": "The authenticationValue returned in the 3DS authentication\nCAVV: Visa, AMEX, JCB, Diners/Discover\nUCAF: Mastercard",
+            "example": "YXV0aGVudGljYXRpb25WYWx1ZQ=="
+          },
+          "cardholderInfo": {
+            "type": "string",
+            "description": "Statement about the result of the 3DS authentication."
+          },
+          "eci": {
+            "type": "string",
+            "description": "The Electronic Commerce Indicator (ECI) provided by the ACS or DS to indicate the results of the attempt to authenticate the cardholder. The ECI values might differ depending on the card scheme.<br/> For all fully authenticated or authentication attempted transactions the liability will be shifted to the card issuer.<br/><br/> Mastercard<br/>\n  00 - fully authenticated<br/>\n  01 - authentication attempted<br/>\n  02 - no authentication available<br/>\n  07 - fully authenticated&#42;<sup>1</sup><br/><br/>\nAll other card schemes<br/>\n  05 - fully authenticated<br/>\n  06 - authentication attempted<br/>\n  07 - no authentication available<br/><br/>\n&#42;<sup>1</sup> - Mastercard distinguishes between fully authenticated recurring payments (flagged with ECI 07) and all other fully authenticated transactions (flagged with ECI 00).",
+            "example": "05"
+          },
+          "statusReason": {
+            "type": "string",
+            "description": "Reason why the authenticationResult.status field has the specified value.<br/> 01 = Card authentication failed<br/> 02 = Unknown Device<br/> 03 = Unsupported Device<br/> 04 = Exceeds authentication frequency limit<br/> 05 = Expired card<br/> 06 = Invalid card number<br/> 07 = Invalid transaction<br/> 08 = No Card record<br/> 09 = Security failure<br/> 10 = Stolen card<br/> 11 = Suspected fraud<br/> 12 = Transaction not permitted to cardholder<br/> 13 = Cardholder not enrolled in service<br/> 14 = Transaction timed out at the ACS<br/> 15 = Low confidence<br/> 16 = Medium confidence<br/> 17 = High confidence<br/> 18 = Very High confidence<br/> 19 = Exceeds ACS maximum challenges<br/> 20 = Non-Payment transaction not supported<br/> 21 = 3RI transaction not supported<br/> 22 = ACS technical issue<br/> 23 = Decoupled Authentication required by ACS but not requested by 3DS Requestor<br/> 24 = 3DS Requestor Decoupled Max Expiry Time exceeded<br/> 25 = Decoupled Authentication was provided insufficient time to authenticate cardholder. ACS will not make attempt<br/> 26 = Authentication attempted but not performed by the cardholder<br/> 27–79 = Reserved for EMVCo future use (values invalid until defined by EMVCo)<br/> 80–99 = Reserved for DS use<br/>",
+            "example": "01"
+          },
+          "forceChallenge": {
+            "type": "boolean",
+            "description": "Flag to force challenge for 3ds v2",
+            "example": true
+          },
+          "errorDetails": {
+            "$ref": "#/components/schemas/AuthenticationResultErrorData"
+          }
+        },
+        "description": "Object containing the result of the 3DS authentication transaction (final results will be available only in case of frictionless flow)"
+      },
+      "ChallengeData": {
+        "type": "object",
+        "properties": {
+          "acsUrl": {
+            "type": "string",
+            "description": "Fully qualified URL of the ACS in case the authentication response message indicates that further cardholder interaction is required to complete the authentication. relevant for 3DS 2.0 only",
+            "example": "https://link-to-the-issuer.acs"
+          },
+          "base64EncodedChallengeRequest": {
+            "type": "string",
+            "description": "Base64-encoded Challenge Request object in case the authentication response message indicates that further Cardholder interaction is required to complete the authentication. (3DS 2.0)",
+            "example": "Y2hhbGxhbmdlRGF0YQ=="
+          },
+          "challengeWindowSize": {
+            "type": "string",
+            "description": "Dimensions of the challenge iframe window in which the challenge page will be displayed to the Cardholder. This value should match the provided size in the browserInfo call.\nEMVCo assigned window size.\n'01' -> 250px x 400px,\n'02' -> 390px x 400px,\n'03' -> 500px x 600px,\n'04' -> 600px x 400px,\n'05' -> Full screen, or full container content\nrelevant for 3DS 2.0 only",
+            "example": "05",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05"
+            ]
+          }
+        },
+        "description": "Conditional - information available in case of CHALLENGE status, needed for building the challenge iFrame."
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      },
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "description": "Authorization: Bearer merchantId"
+      }
+    }
+  }
+}

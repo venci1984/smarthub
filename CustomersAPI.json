@@ -1,0 +1,2304 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Customers API",
+    "description": "The Customers API is providing services for managing customers and their related addresses, personas and payment instruments information."
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Customers API"
+    }
+  ],
+  "paths": {
+    "/customers": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get list of customers",
+        "description": "Endpoint to receive a list of available customers.\n\n\nThe following parameters can be used as filter.\n- customerId\n- email\n- merchantCustomerId\n- createdAt\n- modifiedAt\n\n\nThe following parameters can be used as a range filter.\n- createdAt\n- modifiedAt\n",
+        "operationId": "getCustomers",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerList"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Create customer",
+        "description": "Endpoint to create a new customer returning a unique customerId.\n\nA customer object acts as a container for customer specific personas and addresses.\n\nIf the email address or the merchantCustomerId of the given customer is already known to the platform the service will respond with HTTP status 200 OK. For every newly created customer service will respond with the HTTP status 201 CREATED\n",
+        "operationId": "createCustomer",
+        "requestBody": {
+          "description": "Request body to create a new customer.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/customers/{customerId}": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get customer",
+        "description": "Endpoint to receive a customer referencing the customerId.\n\n\nThe service will also return associated persona and address data\n",
+        "operationId": "getCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersGetNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Delete customer",
+        "description": "Endpoint to delete a specific customer referencing the customerId.\n",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersGetNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Update customer",
+        "description": "Endpoint to update the merchantCustomerId of a specific customer referencing the customerId\n",
+        "operationId": "updateCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for updating a customer.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad value caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPatchBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/customers/{customerId}/personas/{personaId}": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get customer persona",
+        "description": "Endpoint to receive a specific persona data referencing the corresponding personaId and customerId.\n",
+        "operationId": "getPersona",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "personaId",
+            "in": "path",
+            "description": "ID of the specific persona.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPersonasGetNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/{customerId}/personas": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get list of customer persona",
+        "description": "Endpoint to receive a list of available personas for a specific customer referencing the customerId.\n",
+        "operationId": "getPersonas",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPersonasGetAllBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Assign persona to customer",
+        "description": "Endpoint to create a persona object and assign it to a specific customer referencing the customerId.\n\nPersonas contain person related attributes of a customer which are needed to process some payment methods.\n",
+        "operationId": "createPersona",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body to create a new persona.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPersonasPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/customers/{customerId}/addresses/{addressId}": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get customer address",
+        "description": "Endpoint to receive a specific address data referencing the corresponding personaId and customerId.\n",
+        "operationId": "getAddress",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "addressId",
+            "in": "path",
+            "description": "ID of the specific address.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersAddressesGetNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/{customerId}/addresses": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get list of customer addresses",
+        "description": "Endpoint to receive a list of available addresses for a specific customer referencing the customerId.\n",
+        "operationId": "getAddresses",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersAddressesGetAllBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Assign address to customer",
+        "description": "Endpoint to create a new address for a specific customer.\n\nAddresses containing address related attributes of a customer which are needed to process some payment methods.\n",
+        "operationId": "createAddress",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body to create a new address.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersAddressesPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/customers/{customerId}/payment-instruments": {
+      "get": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Get list of customer payment instruments",
+        "description": "Endpoint to receive a list of available payment instruments for a specific customer referencing the customerId.\n",
+        "operationId": "getPaymentInstruments",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentInstrumentList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPaymentInstrumentsGetBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Assign payment instrument to customer",
+        "description": "Endpoint to assign a payment instrument to a specific customer referencing the customerId.\n",
+        "operationId": "assignPaymentInstrumentToCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for creating a new paymentinstrument.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerPaymentInstrumentRelation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "400": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPaymentInstrumentsPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/customers/{customerId}/payment-instruments/{paymentInstrumentId}": {
+      "delete": {
+        "tags": [
+          "Customers API"
+        ],
+        "summary": "Delete payment instrument from customer",
+        "description": "Endpoint to delete a specific payment instrument from a customer.\n",
+        "operationId": "deletePaymentInstrument",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the specific customer.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paymentInstrumentId",
+            "in": "path",
+            "description": "ID of the specific paymentinstrument.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersPaymentInstrumentsDeleteBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CustomerList": {
+        "title": "CustomerList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of customers.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "CustomerRequest": {
+        "title": "CustomerRequest",
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 1,
+            "type": "string",
+            "description": "The customers email address. unique. Mandatory for the products 'klarna-pay-now', 'klarna-pay-later', 'klarna-slice-it, sepa'",
+            "format": "email"
+          },
+          "merchantCustomerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by you."
+          },
+          "customerType": {
+            "type": "string",
+            "description": "Customer type. Specified as \"organization\" for companies and organizations. Mandatory for b2b customers."
+          },
+          "organizationRegistrationId": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization registration id. Only applicable for organization customer types."
+          },
+          "organizationVatId": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization VAT id. Only used for organization customer types."
+          },
+          "organizationRegistrationRegister": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization registers can be the court name that registered the company. The registry location name, or another other organization registering institution name. This field is optional."
+          },
+          "organizationEntityType": {
+            "$ref": "#/components/schemas/OrganizationEntityTypeEnum"
+          },
+          "companyName": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Company name. Required for organization customers. limited to 99 characters!"
+          },
+          "reference": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional reference within the company. i.e. 'Department XYZ'. Can be specified for organization customers. limited to 99 characters!"
+          }
+        }
+      },
+      "CustomerResponse": {
+        "title": "CustomerResponse",
+        "required": [
+          "customerId",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by payengine"
+          },
+          "email": {
+            "type": "string",
+            "description": "The customers email address. unique.",
+            "format": "email"
+          },
+          "merchantCustomerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by you."
+          },
+          "addresses": {
+            "type": "array",
+            "description": "A list of all underlying addresses which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/AddressResponse"
+            }
+          },
+          "personas": {
+            "type": "array",
+            "description": "A list of all underlying personas which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/PersonaResponse"
+            }
+          },
+          "paymentInstruments": {
+            "type": "array",
+            "description": "A list of all underlying paymentinstruments which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentInstrumentResponse"
+            }
+          }
+        }
+      },
+      "CustomersGetNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while fetching customer!"
+          },
+          "code": {
+            "type": "number",
+            "example": 4002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersGetErrors"
+            }
+          }
+        }
+      },
+      "CustomersPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating customer!"
+          },
+          "code": {
+            "type": "number",
+            "example": 4001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPostErrors"
+            }
+          }
+        }
+      },
+      "CustomersPatchBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating customer!"
+          },
+          "code": {
+            "type": "number",
+            "example": 4003
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPatchErrors"
+            }
+          }
+        }
+      },
+      "CustomerUpdateRequest": {
+        "title": "CustomerUpdateRequest",
+        "type": "object",
+        "properties": {
+          "merchantCustomerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by you."
+          },
+          "customerType": {
+            "type": "string",
+            "description": "Customer type. Specified as \"organization\" for companies and organizations. Mandatory for b2b customers."
+          },
+          "organizationRegistrationId": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization registration id. Only applicable for organization customer types."
+          },
+          "organizationVatId": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization VAT id. Only used for organization customer types."
+          },
+          "organizationRegistrationRegister": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Organization registers can be the court name that registered the company. The registry location name, or another other organization registering institution name. This field is optional."
+          },
+          "organizationEntityType": {
+            "$ref": "#/components/schemas/OrganizationEntityTypeEnum"
+          },
+          "companyName": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Company name. Required for organization customers. limited to 99 characters!"
+          },
+          "reference": {
+            "maxLength": 99,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional reference within the company. i.e. 'Department XYZ'. Can be specified for organization customers. limited to 99 characters!"
+          }
+        }
+      },
+      "CustomersGetErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPatchErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          },
+          {
+            "code": 4202,
+            "field": "merchantCustomerId",
+            "message": "Bad value for merchantCustomerId. Expected: A valid unique string identifier between 1 and 255 characters."
+          },
+          {
+            "code": 4203,
+            "field": "merchantCustomerId",
+            "message": "Value for merchantCustomerId already exists. Expected: A valid unique string identifier between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4201,
+            "field": "email",
+            "message": "Bad value for email. Expected: valid e-mail address between 1 and 254 characters."
+          },
+          {
+            "code": 4202,
+            "field": "merchantCustomerId",
+            "message": "Bad value for merchantCustomerId. Expected: unique string between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "PersonaList": {
+        "title": "PersonaList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of personas.",
+            "items": {
+              "$ref": "#/components/schemas/PersonaResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "PersonaRequest": {
+        "title": "PersonaRequest",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this persona. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this persona. limited to 35 characters!"
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the persona. limited to 16 characters!"
+          },
+          "mobile": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The mobile of the persona. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the persona. limited to 16 characters!"
+          },
+          "birthday": {
+            "type": "number",
+            "description": "The birthday of the persona. Format as milliseconds since epoch representing UTC Date.",
+            "format": "date-time"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderBaseTypeEnum"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the persona."
+          }
+        }
+      },
+      "PersonaResponse": {
+        "title": "PersonaResponse",
+        "required": [
+          "createdAt",
+          "modifiedAt",
+          "personaId"
+        ],
+        "type": "object",
+        "properties": {
+          "personaId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the persona. Created by payengine"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this persona.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this persona.",
+            "format": "date-time"
+          },
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this persona. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this persona. limited to 35 characters!"
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the persona. limited to 16 characters!"
+          },
+          "mobile": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The mobile of the persona. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the persona. limited to 16 characters!"
+          },
+          "birthday": {
+            "type": "number",
+            "description": "The birthday of the persona. Format as milliseconds since epoch representing UTC Date.",
+            "format": "date-time"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderBaseTypeEnum"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the persona."
+          }
+        }
+      },
+      "CustomersPersonasGetNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "/customers/customer_asdfghjk/personas/persona_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while fetching persona!"
+          },
+          "code": {
+            "type": "number",
+            "example": 8002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPersonasGetErrors"
+            }
+          }
+        }
+      },
+      "CustomersPersonasGetAllBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/personas"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while fetching persona!"
+          },
+          "code": {
+            "type": "number",
+            "example": 8002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPersonasGetAllErrors"
+            }
+          }
+        }
+      },
+      "CustomersPersonasPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/personas"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating persona!"
+          },
+          "code": {
+            "type": "number",
+            "example": 8001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPersonasPostErrors"
+            }
+          }
+        }
+      },
+      "CustomersPersonasGetErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          },
+          {
+            "code": 8101,
+            "field": "personaId",
+            "message": "A Persona with specified id can not be found. Expected: A valid string identifier representing a Persona object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPersonasPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 8201,
+            "field": "firstName",
+            "message": "Field firstName is missing. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 8202,
+            "field": "firstName",
+            "message": "Bad value for firstName. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 8203,
+            "field": "lastName",
+            "message": "Field lastName is missing. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 8204,
+            "field": "lastName",
+            "message": "Bad value for lastName. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 8205,
+            "field": "phone",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 8206,
+            "field": "fax",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 8207,
+            "field": "mobile",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 8208,
+            "field": "birthday",
+            "message": "Bad value for 'birthday'. Expected: Milliseconds since epoch representing UTC Date."
+          },
+          {
+            "code": 8209,
+            "field": "gender",
+            "message": "Bad range for gender. Expected: string in ['MALE', 'FEMALE']."
+          },
+          {
+            "code": 8210,
+            "field": "title",
+            "message": "Bad value for title. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPersonasGetAllErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "AddressList": {
+        "title": "AddressList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of addresses.",
+            "items": {
+              "$ref": "#/components/schemas/AddressResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "AddressRequest": {
+        "title": "AddressRequest",
+        "required": [
+          "city",
+          "country",
+          "firstName",
+          "lastName",
+          "street",
+          "zip"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this address. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this address. limited to 35 characters!"
+          },
+          "street": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string",
+            "description": "The street of this address."
+          },
+          "houseNumber": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The housenumber of the street."
+          },
+          "city": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "zip": {
+            "maxLength": 10,
+            "minLength": 3,
+            "type": "string",
+            "description": "The zip of the address."
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string",
+            "description": "The country of the address. Format [https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2]"
+          },
+          "state": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The state of the address."
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the address. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the address. limited to 16 characters!"
+          },
+          "mobile": {
+            "type": "string",
+            "description": "The mobile of the address. limited to 16 characters!"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the address."
+          },
+          "additionalDetails": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional details for this address. This is a form free descriptor."
+          }
+        }
+      },
+      "AddressResponse": {
+        "title": "AddressResponse",
+        "required": [
+          "addressId",
+          "createdAt",
+          "modifiedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "addressId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the address. Created by payengine"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this address.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this address.",
+            "format": "date-time"
+          },
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this address. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this address. limited to 35 characters!"
+          },
+          "street": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string",
+            "description": "The street of this address."
+          },
+          "houseNumber": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The housenumber of the street."
+          },
+          "city": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "zip": {
+            "maxLength": 10,
+            "minLength": 3,
+            "type": "string",
+            "description": "The zip of the address."
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string",
+            "description": "The country of the address. Format [https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2]"
+          },
+          "state": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The state of the address."
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the address. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the address. limited to 16 characters!"
+          },
+          "mobile": {
+            "type": "string",
+            "description": "The mobile of the address. limited to 16 characters!"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the address."
+          },
+          "additionalDetails": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional details for this address. This is a form free descriptor."
+          }
+        }
+      },
+      "CustomersAddressesGetAllBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/addresses"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while loading address!"
+          },
+          "code": {
+            "type": "number",
+            "example": 6002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersAddressesGetAllErrors"
+            }
+          }
+        }
+      },
+      "CustomersAddressesGetNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/addresses/address_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while loading address!"
+          },
+          "code": {
+            "type": "number",
+            "example": 6002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersAddressesGetErrors"
+            }
+          }
+        }
+      },
+      "CustomersAddressesPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/addresses"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating persona!"
+          },
+          "code": {
+            "type": "number",
+            "example": 6001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersAddressesPostErrors"
+            }
+          }
+        }
+      },
+      "CustomersAddressesGetAllErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersAddressesGetErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          },
+          {
+            "code": 6101,
+            "field": "addressId",
+            "message": "An Address with specified id can not be found. Expected: A valid string identifier representing an Address object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersAddressesPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 6201,
+            "field": "firstName",
+            "message": "Field firstName is missing. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6202,
+            "field": "firstName",
+            "message": "Bad value for firstName. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6203,
+            "field": "lastName",
+            "message": "Field lastName is missing. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6204,
+            "field": "lastName",
+            "message": "Bad value for lastName. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6205,
+            "field": "street",
+            "message": "Field street is missing. Expected: string between 1 and 300 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6206,
+            "field": "street",
+            "message": "Bad value for street. Expected: string between 1 and 300 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6208,
+            "field": "houseNumber",
+            "message": "Bad value for houseNumber. Expected: string between 1 and 35 symbols, containing letters and digits."
+          },
+          {
+            "code": 6209,
+            "field": "city",
+            "message": "Field city is missing. Expected: string between 1 and 35 symbols, containing letters, digits, whitespaces and dashes."
+          },
+          {
+            "code": 6210,
+            "field": "city",
+            "message": "Bad value for city. Expected: string between 1 and 35 symbols, containing letters, digits, whitespaces and dashes."
+          },
+          {
+            "code": 6211,
+            "field": "zip",
+            "message": "Field zip is missing. Expected: string between 3 and 10 symbols, containing letters, digits, whitespaces and dashes."
+          },
+          {
+            "code": 6212,
+            "field": "zip",
+            "message": "Bad value for zip. Expected: string between 3 and 10 symbols, containing letters, digits, whitespaces and dashes."
+          },
+          {
+            "code": 6213,
+            "field": "country",
+            "message": "Field country is missing. Expected: string with size 2 symbols, according to ISO 3166-1 Alpha-2 code."
+          },
+          {
+            "code": 6214,
+            "field": "country",
+            "message": "Bad value for country. Expected: string with size 2 symbols, according to ISO 3166-1 Alpha-2 code."
+          },
+          {
+            "code": 6215,
+            "field": "state",
+            "message": "Bad value for state. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6216,
+            "field": "phone",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 6217,
+            "field": "fax",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 6218,
+            "field": "mobile",
+            "message": "Bad value for phone. Expected: string between 1 and 16 symbols, containing numbers and chars in [+/]."
+          },
+          {
+            "code": 6219,
+            "field": "title",
+            "message": "Bad value for title. Expected: string between 1 and 35 symbols, containing letters, whitespaces and chars in ['.-]."
+          },
+          {
+            "code": 6220,
+            "field": "additionalDetails",
+            "message": "Bad value for additionalDetails. Expected: string between 1 and 255 symbols, containing letters, whitespaces and chars in ['.-]."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "PaymentInstrumentList": {
+        "title": "PaymentInstrumentList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of paymeninstruments.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentInstrumentResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "PaymentInstrumentResponse": {
+        "title": "PaymentInstrumentResponse",
+        "required": [
+          "attributes",
+          "merchantPaymentInstrumentId",
+          "origin",
+          "paymentInstrumentId",
+          "recurring",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentInstrumentId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the paymentinstrument. Created by payengine"
+          },
+          "merchantPaymentInstrumentId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the paymentinstrument on your system. Created by you. limited to 100 characters."
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ProductsBaseTypeEnum"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PaymentInstrumentType"
+          },
+          "recurring": {
+            "type": "boolean",
+            "description": "This flag indicates if this paymentinstrument can be used for recurring payments."
+          },
+          "createdAt": {
+            "type": "integer",
+            "description": "Timestamp when it was created"
+          },
+          "modifiedAt": {
+            "type": "integer",
+            "description": "Timestamp when it was last updated"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "cofContracts": {
+                "type": "array",
+                "description": "For CreditCard only",
+                "items": {
+                  "$ref": "#/components/schemas/CofContractResponse"
+                }
+              },
+              "customerRelationUuid": {
+                "type": "string",
+                "description": "For TWINT only. Recognition of a returning customer."
+              }
+            },
+            "description": "Additional attributes of this paymentinstrument. E.g. masked bank- or creditcarddata.<br> For Klarna we will have possibleTypes object in the response (e.g. klarna-pay-now, klarna-pay-later, klarna-slice-it)<br> Also we will have country, and locale.<br> For PPRO payments methods we could have accountHolder (if one was used for making the transaction)"
+          }
+        },
+        "description": "The paymentinstrument which has been used to process this order. note: If no paymentinstrument has been submitted, one has been created with your submitted data."
+      },
+      "CustomersPaymentInstrumentsGetBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/payment-instruments"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while fetching payment instrument!"
+          },
+          "code": {
+            "type": "number",
+            "example": 10001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPaymentInstrumentsGetErrors"
+            }
+          }
+        }
+      },
+      "CustomersPaymentInstrumentsPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/payment-instruments"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while adding payment instrument association!"
+          },
+          "code": {
+            "type": "number",
+            "example": 4099
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPaymentInstrumentsPostErrors"
+            }
+          }
+        }
+      },
+      "CustomersPaymentInstrumentsDeleteBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/customers/customer_asdfghjk/payment-instruments/paymentinstrument_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing payment instrument association!"
+          },
+          "code": {
+            "type": "number",
+            "example": 4011
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomersPaymentInstrumentsDeleteErrors"
+            }
+          }
+        }
+      },
+      "CustomerPaymentInstrumentRelation": {
+        "title": "CustomerPaymentInstrumentRelation",
+        "required": [
+          "paymentInstrumentId"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentInstrumentId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of a paymentinstrument which will be connected to the customer."
+          }
+        }
+      },
+      "CustomersPaymentInstrumentsGetErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPaymentInstrumentsPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          },
+          {
+            "code": 10101,
+            "field": "paymentInstrumentId",
+            "message": "A Payment Instrument with specified id can not be found. Expected: A valid string identifier representing a Payment Instrument object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CustomersPaymentInstrumentsDeleteErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 4101,
+            "field": "customerId",
+            "message": "A Customer with specified id can not be found. Expected: A valid string identifier representing a Customer object between 1 and 255 characters."
+          },
+          {
+            "code": 10101,
+            "field": "paymentInstrumentId",
+            "message": "A Payment Instrument with specified id can not be found. Expected: A valid string identifier representing a Payment Instrument object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "CofContractResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the COF contract of the payment instrument.\nIn case more than one COF type should be used for one paymentInstrument this identifier should be stored by the merchant and referenced in the payment transactions.",
+            "example": "contract_123abc456x"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CofContractTypeEnum"
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel (entry mode) via which the COF initial storage transaction is processed.\nIf not passed it defaults to ECOM.",
+            "example": "ECOM",
+            "enum": [
+              "ECOM",
+              "MOTO"
+            ]
+          },
+          "recurringExpiry": {
+            "type": "string",
+            "description": "Date after which no further authorizations shall be performed. This field is only required in case of an authentication for recurring payments.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "recurringFrequency": {
+            "type": "number",
+            "description": "Indicates the minimum number of days between authorizations. This field is only required in case of an authentication for recurring payments.",
+            "example": 30
+          }
+        },
+        "description": "The credentials on file (COF) contract object specifying the COF usage of the payment instrument. The presence of this object triggers an zero amount authorization (card check) for the given channel and type."
+      },
+      "PaymentInstrumentType": {
+        "title": "PaymentInstrumentType",
+        "type": "string",
+        "description": "the type of the payment instrument",
+        "enum": [
+          "sepa",
+          "creditcard",
+          "paypal",
+          "paydirekt",
+          "bank-transfer"
+        ]
+      },
+      "OrganizationEntityTypeEnum": {
+        "title": "OrganizationEntityTypeEnum",
+        "type": "string",
+        "description": "\nCustomers that are organizations use this to specify their entity type.<br>\nKlarna B2B specific organizationEntityType :<br>\n<br>LIMITED_COMPANY <br>PUBLIC_LIMITED_COMPANY <br>ENTREPRENEURIAL_COMPANY <br>LIMITED_PARTNERSHIP_LIMITED_COMPANY <br>LIMITED_PARTNERSHIP <br>GENERAL_PARTNERSHIP <br>REGISTERED_SOLE_TRADER <br>SOLE_TRADER <br>CIVIL_LAW_PARTNERSHIP <br>PUBLIC_INSTITUTION <br>OTHER\n<br>RatePAY B2B specific organizationEntityType :<br>\n<br>GMBH <br>GMBH-I-GR <br>GGMBH <br>GMBH-CO-KG <br>OHG <br>KG <br>EV <br>EG <br>AG <br>UG <br>UG-I-GR <br>EINZELUNTERNEHMER <br>EK <br>PARTNERSCHAFT <br>PUBLIC_INSTITUTION <br>GBR <br>AOR <br>KOR <br>STIFTUNG <br>OTHER <br>SE <br>SCE <br>OG <br>OEG <br>KEG <br>CH_EINZELUNTERNEHMER <br>EINFACHE-GESELLSCHAFT <br>KOLLEKTIVGESELLSCHAFT\n",
+        "enum": [
+          "LIMITED_COMPANY",
+          "PUBLIC_LIMITED_COMPANY",
+          "ENTREPRENEURIAL_COMPANY",
+          "LIMITED_PARTNERSHIP_LIMITED_COMPANY",
+          "LIMITED_PARTNERSHIP",
+          "GENERAL_PARTNERSHIP",
+          "REGISTERED_SOLE_TRADER",
+          "SOLE_TRADER",
+          "CIVIL_LAW_PARTNERSHIP",
+          "PUBLIC_INSTITUTION",
+          "GMBH",
+          "GMBH-I-GR",
+          "GGMBH",
+          "GMBH-CO-KG",
+          "OHG",
+          "KG",
+          "EV",
+          "EG",
+          "AG",
+          "UG",
+          "UG-I-GR",
+          "EINZELUNTERNEHMER",
+          "EK",
+          "PARTNERSCHAFT",
+          "GBR",
+          "AOR",
+          "KOR",
+          "STIFTUNG",
+          "SE",
+          "SCE",
+          "OG",
+          "OEG",
+          "KEG",
+          "CH_EINZELUNTERNEHMER",
+          "EINFACHE-GESELLSCHAFT",
+          "KOLLEKTIVGESELLSCHAFT",
+          "OTHER"
+        ]
+      },
+      "GenderBaseTypeEnum": {
+        "title": "GenderBaseTypeEnum",
+        "type": "string",
+        "description": "The gender of the persona.",
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      },
+      "ProductsBaseTypeEnum": {
+        "title": "ProductsBaseTypeEnum",
+        "type": "string",
+        "description": "The product used to create this order. (mandatory)",
+        "enum": [
+          "creditcard",
+          "paypal",
+          "paydirekt",
+          "ratepay-invoice",
+          "ratepay-directdebit",
+          "ratepay-installment",
+          "sepa",
+          "sofort",
+          "klarna-pay-now",
+          "klarna-pay-later",
+          "klarna-slice-it",
+          "prepayment",
+          "giropay",
+          "eps",
+          "ideal",
+          "alipay",
+          "bancontact",
+          "wechat-pay",
+          "postfinance-card",
+          "payu",
+          "paysafecard",
+          "twint",
+          "union-pay"
+        ]
+      },
+      "CofContractTypeEnum": {
+        "title": "CofContractTypeEnum",
+        "type": "string",
+        "description": "Credential on file type:\n   * `ONECLICK` - The payment instrument is persisted, recurring and can be used for oneClick payments.\n   * `UNSCHEDULED` - The payment instrument is persisted, recurring and can be used for merchant initiated unscheduled orders.\n   * `SCHEDULED` - The payment instrument is persisted, recurring and can be used for merchant initiated scheduled or instalments orders.",
+        "enum": [
+          "ONECLICK",
+          "UNSCHEDULED",
+          "SCHEDULED"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      },
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "description": "Authorization: Bearer merchantId"
+      }
+    }
+  }
+}
