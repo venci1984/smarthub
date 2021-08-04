@@ -1,0 +1,244 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Batch API",
+    "description": "The Batch service API allows the merchants to upload files with multiple transactions data that will be processed asynchronously by the system."
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Batch API"
+    }
+  ],
+  "paths": {
+    "/batch": {
+      "get": {
+        "tags": [
+          "Batch API"
+        ],
+        "summary": "Get list of batch files",
+        "description": "Endpoint to receive a list of uploaded batch files.\n\nThe following parameters can be used as filter.\n- page\n- size\n- createdAtAfter\n- createdAtBefore\n- batchRequestFileName\n- batchSequence\n- generatedAtAfter\n- generatedAtBefore\n\nThe following parameter names can be used for ordering the results.\n- createdAt\n- batchRequestFileName\n- batchSequence\n- generatedAt\n",
+        "operationId": "getBatches",
+        "responses": {
+          "200": {
+            "description": "List of transactions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BatchResponse"
+                  }
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "id": "BatchFile-0cdecdf5-e957-49b5-9324-b5734545aaec",
+                      "batchSequence": 14359,
+                      "version": 1,
+                      "createdAt": 1538587140000,
+                      "generatedAt": 1234556777,
+                      "batchRequestFileName": "merchant_kjrysmfssx_11.csv",
+                      "batchResponseFileName": "merchant_kjrysmfssx_1_result.csv",
+                      "processStatus": "COMPLETE"
+                    }
+                  ],
+                  "totalPages": 1
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    },
+    "/batch/{batchId}": {
+      "get": {
+        "tags": [
+          "Batch API"
+        ],
+        "summary": "Get specific batch file details",
+        "description": "Endpoint to receive the meta data of a specific batch file referencing the batchId\n",
+        "operationId": "getBatch",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "description": "Specific batch transaction",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BatchResponse"
+                  }
+                },
+                "example": {
+                  "id": "BatchFile-0cdecdf5-e957-49b5-9324-b5734545aaec",
+                  "batchSequence": 14359,
+                  "version": 1,
+                  "createdAt": 1538587140000,
+                  "generatedAt": 1234556777,
+                  "batchRequestFileName": "merchant_kjrysmfssx_11.csv",
+                  "batchResponseFileName": "merchant_kjrysmfssx_1_result.csv",
+                  "processStatus": "COMPLETE"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchResponse": {
+        "title": "BatchResponse",
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the batch transaction. Created by payengine"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation date.",
+            "format": "date-time"
+          },
+          "generatedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the generation date",
+            "format": "date-time"
+          },
+          "batchSequence": {
+            "type": "number",
+            "description": "Match the number of operation line records in file header"
+          },
+          "version": {
+            "type": "number",
+            "description": "Match the version in file header"
+          },
+          "batchRequestFileName": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Uploaded file with batch transactions"
+          },
+          "batchResponseFileName": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Parsed result file with batch transactions"
+          }
+        }
+      },
+      "BatchNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/batch/{batchId}"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "code": {
+            "type": "number",
+            "example": 70013
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Batch file with such id does not exist"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BatchFileErrors"
+            }
+          }
+        }
+      },
+      "BatchFileErrors": {
+        "title": "Error",
+        "type": "array",
+        "example": [
+          {
+            "code": 70013,
+            "message": "Batch file with such id does not exist."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      }
+    }
+  }
+}
