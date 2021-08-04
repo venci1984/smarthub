@@ -75,58 +75,6 @@
           }
         ]
       }
-    },
-    "/settlements/download": {
-      "get": {
-        "tags": [
-          "Settlements API"
-        ],
-        "summary": "Download settlement file",
-        "description": "Endpoint to download specific settlement files.\n\n\nThe files that should be downloaded have to be referenced via the settlementId in the body of the service request.\n\n\nIn case there is a list of settlementIds the files will be returned as a zip file.\n\n\nIn case only one settlementId is referenced the plain file will be returned.\n",
-        "operationId": "downloadSettlements",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "List of settlement ids",
-            "style": "form",
-            "explode": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SettlementResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found caused by invalid input.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SettlementsNotFound"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "basicAuth": []
-          }
-        ]
-      }
     }
   },
   "components": {
