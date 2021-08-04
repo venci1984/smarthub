@@ -1,0 +1,2747 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Transactions API",
+    "description": "The Transactions API is providing services for managing payment transactions referencing payment orders."
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Transactions API"
+    }
+  ],
+  "paths": {
+    "/orders/{orderId}/transactions/{transactionId}/cancel": {
+      "post": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Create cancel transaction",
+        "description": "Endpoint to create a cancelation a preauth transaction referencing the corresponding orderId and transactionId.\n\nA cancel transaction can only be applied to a non expired preauth transaction that is in status SUCCESS.\nPartial cancelations are supported but the initialAmount cannot be higher than the amount that was authorized\n",
+        "operationId": "createCancel",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "ID of the affected transaction. note: it must be a preauth.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for creating a cancel",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponseParent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsCancelPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/orders/{orderId}/transactions/{transactionId}/capture": {
+      "post": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Create capture transaction",
+        "description": "Endpoint to capture a preauth transaction referencing the corresponding orderId and transactionId.\n\nA capture transaction can only be applied to a non expired preauth transaction that is in status SUCCESS.\nPartial captures are supported but the initialAmount cannot be higher than the amount that was authorized.\n",
+        "operationId": "createCapture",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "ID of the affected transaction. note: it must be a preauth.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for creating a capture.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaptureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsCapturePostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/orders/{orderId}/transactions/{transactionId}/refund": {
+      "post": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Create refund transaction",
+        "description": "Endpoint to refund a capture transaction referencing the corresponding orderId and transactionId.\n\nA refund transaction can only be applied to a capture transaction that is in status SUCCESS.\nPartial refunds are supported but the initialAmount cannot be higher than the amount that was captured.\n\nIn case refunds for sepa/sofort/prepayment are executed using the online bank transfer feature the refund will result in the status PENDING.\n\nThe transaction response will contain a challenge element with the TAN instructions.\n\nThe TAN needs to be transmitted in subsequent request. See \"PATCH /orders/{orderId}/transactions/{transactionId}\"\n",
+        "operationId": "createRefund",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "ID of the affected transaction. note: it must be a capture or a debit.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for creating a refund.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponseParent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsRefundPostBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/orders/{orderId}/transactions/{transactionId}": {
+      "get": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Get transaction",
+        "description": "Endpoint to receive a specific transaction referencing the orderId and transactionId.\n",
+        "operationId": "getTransaction",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "ID of the specific transaction.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponseParent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsGetNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Update order transaction",
+        "description": "Endpoint to update a specific transaction referencing the orderId and transactionId.\n\nThe service can be used for updating preauth transactions for ratepay-invoice, ratepay-directdebit or ratepay-installment that have not been captured yet.\n\nThe service can also be used for updating the TAN for refund transactions using the online bank transfer feature for sepa/sofort/prepayment that are in status PENDING.\n",
+        "operationId": "updateTransaction",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "ID of the specific transaction.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for updating a transaction",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponseParent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsPatchBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/orders/{orderId}/transactions": {
+      "get": {
+        "tags": [
+          "Transactions API"
+        ],
+        "summary": "Get list of order transactions",
+        "description": "Endpoint to receive a list of all available transactions of an orders referencing the orderId.\n",
+        "operationId": "getTransactions",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the affected order.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersTransactionsGetAllNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TransactionList": {
+        "title": "TransactionList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of transactions.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponseParent"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "TransactionRequest": {
+        "title": "TransactionRequest",
+        "required": [
+          "currency",
+          "initialAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "initialAmount": {
+            "type": "number",
+            "description": "Amount as smallest currency unit\ne.g 100 EUR will be result in amount = 10000\n",
+            "format": "int"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "Currency code according to https://en.wikipedia.org/wiki/ISO_4217"
+          },
+          "description": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The description from your system/shop of this transaction."
+          },
+          "basket": {
+            "type": "array",
+            "description": "The basket of your transaction. (optional, mandatory for ratepay-invoice, ratepay-directdebit and ratepay-installment)",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/MetaRequest"
+          }
+        }
+      },
+      "TransactionResponseParent": {
+        "title": "TransactionResponseParent",
+        "required": [
+          "canceledAmount",
+          "capturedAmount",
+          "createdAt",
+          "currency",
+          "description",
+          "initialAmount",
+          "modifiedAt",
+          "order",
+          "parentTransaction",
+          "refundedAmount",
+          "status",
+          "transactionId",
+          "transactions"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "transactionId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the transaction. Created by payengine"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TransactionStatesBaseTypeEnum"
+          },
+          "initialAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The initial amount given to create this transaction.",
+            "format": "int"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "Currency code according to https://en.wikipedia.org/wiki/ISO_4217"
+          },
+          "description": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The description from your system/shop of this transaction."
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this transaction.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this transaction.",
+            "format": "date-time"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "transactions": {
+            "type": "array",
+            "description": "A list of underlying transactions.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponseChildren"
+            }
+          },
+          "parentTransaction": {
+            "$ref": "#/components/schemas/TransactionResponseChildren"
+          },
+          "descriptor": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string",
+            "description": "Identifier which holds the orderId"
+          },
+          "capturedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been captured.",
+            "format": "int"
+          },
+          "refundedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been refunded.",
+            "format": "int"
+          },
+          "canceledAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been cancelled.",
+            "format": "int"
+          },
+          "challange": {
+            "$ref": "#/components/schemas/Challange"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TransactionMeta"
+          }
+        }
+      },
+      "TransactionResponseChildren": {
+        "title": "TransactionResponseChildren",
+        "required": [
+          "canceledAmount",
+          "capturedAmount",
+          "createdAt",
+          "currency",
+          "description",
+          "initialAmount",
+          "modifiedAt",
+          "order",
+          "parentTransaction",
+          "refundedAmount",
+          "status",
+          "transactionId",
+          "transactions"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "transactionId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the transaction. Created by payengine"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TransactionStatesBaseTypeEnum"
+          },
+          "initialAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The initial amount given to create this transaction.",
+            "format": "int"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "Currency code according to https://en.wikipedia.org/wiki/ISO_4217"
+          },
+          "description": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The description from your system/shop of this transaction."
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this transaction.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this transaction.",
+            "format": "date-time"
+          },
+          "order": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the connected order."
+          },
+          "transactions": {
+            "type": "array",
+            "description": "A list of underlying transactions.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parentTransaction": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the parent transaction."
+          },
+          "descriptor": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string",
+            "description": "Identifier which holds the orderId"
+          },
+          "capturedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been captured.",
+            "format": "int"
+          },
+          "refundedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been refunded.",
+            "format": "int"
+          },
+          "canceledAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been cancelled.",
+            "format": "int"
+          },
+          "challange": {
+            "$ref": "#/components/schemas/Challange"
+          },
+          "tracking": {
+            "type": "array",
+            "description": "specific parameter for all payment methods, array of object of type Tracking",
+            "items": {
+              "$ref": "#/components/schemas/Tracking"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TransactionMeta"
+          }
+        }
+      },
+      "OrderResponse": {
+        "title": "OrderResponse",
+        "required": [
+          "canceledAmount",
+          "capturedAmount",
+          "channel",
+          "createdAt",
+          "currency",
+          "initialAmount",
+          "modifiedAt",
+          "orderId",
+          "preauthorizedAmount",
+          "refundedAmount",
+          "status",
+          "transactions"
+        ],
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The order id from payengine."
+          },
+          "initialAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The initial amount given to create this order.",
+            "format": "int"
+          },
+          "preauthorizedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been authorized.",
+            "format": "int"
+          },
+          "capturedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been captured.",
+            "format": "int"
+          },
+          "refundedAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been refunded.",
+            "format": "int"
+          },
+          "canceledAmount": {
+            "maximum": 1000000000000000000,
+            "minimum": 1,
+            "type": "number",
+            "description": "The amount which has been cancelled.",
+            "format": "int"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "Currency code according to https://en.wikipedia.org/wiki/ISO_4217"
+          },
+          "transactions": {
+            "type": "array",
+            "description": "A list of all underlying transactions.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponseChildren"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatesBaseTypeEnum"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/ChannelsBaseTypeEnum"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this order.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this order.",
+            "format": "date-time"
+          },
+          "terms": {
+            "type": "number",
+            "description": "A timestamp in milliseconds of the approval of the customer to your terms and conditions. E.g. this is required for RatePAY orders.",
+            "format": "integer"
+          },
+          "privacy": {
+            "type": "number",
+            "description": "A timestamp in milliseconds of the approval of the customer to your privacy policy. E.g. this is required for RatePAY orders.",
+            "format": "integer"
+          },
+          "merchantOrderId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The order id from your system/shop for Creditcards only 30 alphanumeric characters."
+          },
+          "paymentProviderTransactionId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The order id from the payment provider."
+          },
+          "description": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The description from your system/shop of this order."
+          },
+          "statementDescription": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The statement description from your system/shop of this order."
+          },
+          "basket": {
+            "type": "array",
+            "description": "The basket of your order. (optional, mandatory for ratepay-invoice, ratepay-directdebit and ratepay-installment)",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerResponse"
+          },
+          "persona": {
+            "$ref": "#/components/schemas/PersonaResponse"
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/AddressResponse"
+          },
+          "shippingAddress": {
+            "$ref": "#/components/schemas/AddressResponse"
+          },
+          "ipAddress": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The IP address used to submit the order. (Optional, mandatory for ratepay-invoice, ratepay-directdebit and ratepay-installment)"
+          },
+          "paymentInstrument": {
+            "$ref": "#/components/schemas/PaymentInstrumentResponse"
+          },
+          "redirectUrl": {
+            "maxLength": 2048,
+            "minLength": 6,
+            "type": "string",
+            "description": "The URL which the customer needs to be redirected to.",
+            "format": "url"
+          },
+          "source": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The source of the order."
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductsBaseTypeEnum"
+          },
+          "allowedProducts": {
+            "type": "array",
+            "description": "A List of all valid products for this order.",
+            "items": {
+              "$ref": "#/components/schemas/ProductsBaseTypeEnum"
+            }
+          },
+          "settled": {
+            "type": "boolean",
+            "description": "A flag which indicates if this order has been settled or not."
+          },
+          "settlementDate": {
+            "type": "string",
+            "description": "The date of the settlement.",
+            "format": "date-time"
+          },
+          "transactionType": {
+            "$ref": "#/components/schemas/InitialTransactionTypeBaseTypeEnum"
+          },
+          "deviceIdent": {
+            "$ref": "#/components/schemas/DeviceIdentResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/OrderMetaInfResponse"
+          },
+          "lastOperation": {
+            "type": "string",
+            "description": "A combined field of the last executed transaction and the status of the transaction. \"TRANSACTION_<TRANSACTION_TYPE>_<TRANSACTION_STATUS>\"",
+            "enum": [
+              "TRANSACTION_PREAUTH_OK",
+              "TRANSACTION_PREAUTH_CREATED",
+              "TRANSACTION_PREAUTH_IN_PROGRESS",
+              "TRANSACTION_PREAUTH_PENDING",
+              "TRANSACTION_PREAUTH_FAILURE",
+              "TRANSACTION_PREAUTH_DECLINED",
+              "TRANSACTION_PREAUTH_ABORTED",
+              "TRANSACTION_PREAUTH_EXPIRED",
+              "TRANSACTION_CANCEL_OK",
+              "TRANSACTION_CANCEL_SUCCESS",
+              "TRANSACTION_CANCEL_CREATED",
+              "TRANSACTION_CANCEL_IN_PROGRESS",
+              "TRANSACTION_CANCEL_FAILURE",
+              "TRANSACTION_CANCEL_DECLINED",
+              "TRANSACTION_DEBIT_OK",
+              "TRANSACTION_DEBIT_SUCCESS",
+              "TRANSACTION_DEBIT_CREATED",
+              "TRANSACTION_DEBIT_IN_PROGRESS",
+              "TRANSACTION_DEBIT_PENDING",
+              "TRANSACTION_DEBIT_FAILURE",
+              "TRANSACTION_DEBIT_DECLINED",
+              "TRANSACTION_DEBIT_ABORTED",
+              "TRANSACTION_DEBIT_EXPIRED",
+              "TRANSACTION_CAPTURE_OK",
+              "TRANSACTION_CAPTURE_SUCCESS",
+              "TRANSACTION_CAPTURE_CREATED",
+              "TRANSACTION_CAPTURE_IN_PROGRESS",
+              "TRANSACTION_CAPTURE_FAILURE",
+              "TRANSACTION_CAPTURE_DECLINED",
+              "TRANSACTION_CAPTURE_EXPIRED",
+              "TRANSACTION_REFUND_OK",
+              "TRANSACTION_REFUND_SUCCESS",
+              "TRANSACTION_REFUND_CREATED",
+              "TRANSACTION_REFUND_IN_PROGRESS",
+              "TRANSACTION_REFUND_FAILURE",
+              "TRANSACTION_REFUND_DECLINED",
+              "TRANSACTION_CREDIT_OK",
+              "TRANSACTION_CREDIT_SUCCESS",
+              "TRANSACTION_CREDIT_CREATED",
+              "TRANSACTION_CREDIT_IN_PROGRESS",
+              "TRANSACTION_CREDIT_PENDING",
+              "TRANSACTION_CREDIT_FAILURE",
+              "TRANSACTION_CREDIT_ABORTED",
+              "TRANSACTION_CREDIT_DECLINED",
+              "TRANSACTION_CHARGEBACK_CHARGEBACK",
+              "TRANSACTION_CHARGEBACK_BOOKED",
+              "TRANSACTION_CHARGEBACK_LIFTED",
+              "TRANSACTION_CHARGEBACK_BOOKIN"
+            ]
+          }
+        }
+      },
+      "OrdersTransactionsCancelPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12200,
+            "field": "initialAmount",
+            "message": "Field initialAmount is missing.  Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12201,
+            "field": "initialAmount",
+            "message": "Bad value for initialAmount. Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12202,
+            "field": "currency",
+            "message": "Field currency is missing. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12203,
+            "field": "currency",
+            "message": "Bad value for currency. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12217,
+            "field": "description",
+            "message": "Bad value for description. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12219,
+            "field": "basket",
+            "message": "Field basket is missing. Expected: array of type Item."
+          },
+          {
+            "code": 12220,
+            "field": "basket",
+            "message": "Bad value for basket. Expected: array of type Item."
+          },
+          {
+            "code": 12221,
+            "field": "basket.item.name",
+            "message": "Field basket.item.name is missing. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12222,
+            "field": "basket.item.name",
+            "message": "Bad value for basket.item.name. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12223,
+            "field": "basket.item.articleNumber",
+            "message": "Field basket.item.articleNumber is missing. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12224,
+            "field": "basket.item.articleNumber",
+            "message": "Bad value for basket.item.articleNumber. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12225,
+            "field": "basket.item.totalPrice",
+            "message": "Field basket.item.totalPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12226,
+            "field": "basket.item.totalPrice",
+            "message": "Bad value for basket.item.totalPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12227,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Field basket.item.totalPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12228,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Bad value for basket.item.totalPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12229,
+            "field": "basket.item.tax",
+            "message": "Field basket.item.tax is missing. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12230,
+            "field": "basket.item.tax",
+            "message": "Bad value for basket.item.tax. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12231,
+            "field": "basket.item.unitPrice",
+            "message": "Field basket.item.unitPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12232,
+            "field": "basket.item.unitPrice",
+            "message": "Bad value for basket.item.unitPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12233,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Field basket.item.unitPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12234,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Bad value for basket.item.unitPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12235,
+            "field": "basket.item.quantity",
+            "message": "Field basket.item.quantity is missing. Expected: positive integer between 1 and 9999999."
+          },
+          {
+            "code": 12236,
+            "field": "basket.item.quantity",
+            "message": "Bad value for basket.item.quantity. Expected: positive integer between 1 and 9999999."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsCapturePostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12200,
+            "field": "initialAmount",
+            "message": "Field initialAmount is missing.  Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12201,
+            "field": "initialAmount",
+            "message": "Bad value for initialAmount. Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12202,
+            "field": "currency",
+            "message": "Field currency is missing. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12203,
+            "field": "currency",
+            "message": "Bad value for currency. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12217,
+            "field": "description",
+            "message": "Bad value for description. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12219,
+            "field": "basket",
+            "message": "Field basket is missing. Expected: array of type Item."
+          },
+          {
+            "code": 12220,
+            "field": "basket",
+            "message": "Bad value for basket. Expected: array of type Item."
+          },
+          {
+            "code": 12221,
+            "field": "basket.item.name",
+            "message": "Field basket.item.name is missing. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12222,
+            "field": "basket.item.name",
+            "message": "Bad value for basket.item.name. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12223,
+            "field": "basket.item.articleNumber",
+            "message": "Field basket.item.articleNumber is missing. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12224,
+            "field": "basket.item.articleNumber",
+            "message": "Bad value for basket.item.articleNumber. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12225,
+            "field": "basket.item.totalPrice",
+            "message": "Field basket.item.totalPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12226,
+            "field": "basket.item.totalPrice",
+            "message": "Bad value for basket.item.totalPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12227,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Field basket.item.totalPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12228,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Bad value for basket.item.totalPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12229,
+            "field": "basket.item.tax",
+            "message": "Field basket.item.tax is missing. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12230,
+            "field": "basket.item.tax",
+            "message": "Bad value for basket.item.tax. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12231,
+            "field": "basket.item.unitPrice",
+            "message": "Field basket.item.unitPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12232,
+            "field": "basket.item.unitPrice",
+            "message": "Bad value for basket.item.unitPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12233,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Field basket.item.unitPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12234,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Bad value for basket.item.unitPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12235,
+            "field": "basket.item.quantity",
+            "message": "Field basket.item.quantity is missing. Expected: positive integer between 1 and 9999999."
+          },
+          {
+            "code": 12236,
+            "field": "basket.item.quantity",
+            "message": "Bad value for basket.item.quantity. Expected: positive integer between 1 and 9999999."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsRefundPostErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12200,
+            "field": "initialAmount",
+            "message": "Field initialAmount is missing.  Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12201,
+            "field": "initialAmount",
+            "message": "Bad value for initialAmount. Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12202,
+            "field": "currency",
+            "message": "Field currency is missing. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12203,
+            "field": "currency",
+            "message": "Bad value for currency. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12217,
+            "field": "description",
+            "message": "Bad value for description. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12219,
+            "field": "basket",
+            "message": "Field basket is missing. Expected: array of type Item."
+          },
+          {
+            "code": 12220,
+            "field": "basket",
+            "message": "Bad value for basket. Expected: array of type Item."
+          },
+          {
+            "code": 12221,
+            "field": "basket.item.name",
+            "message": "Field basket.item.name is missing. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12222,
+            "field": "basket.item.name",
+            "message": "Bad value for basket.item.name. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12223,
+            "field": "basket.item.articleNumber",
+            "message": "Field basket.item.articleNumber is missing. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12224,
+            "field": "basket.item.articleNumber",
+            "message": "Bad value for basket.item.articleNumber. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12225,
+            "field": "basket.item.totalPrice",
+            "message": "Field basket.item.totalPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12226,
+            "field": "basket.item.totalPrice",
+            "message": "Bad value for basket.item.totalPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12227,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Field basket.item.totalPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12228,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Bad value for basket.item.totalPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12229,
+            "field": "basket.item.tax",
+            "message": "Field basket.item.tax is missing. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12230,
+            "field": "basket.item.tax",
+            "message": "Bad value for basket.item.tax. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12231,
+            "field": "basket.item.unitPrice",
+            "message": "Field basket.item.unitPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12232,
+            "field": "basket.item.unitPrice",
+            "message": "Bad value for basket.item.unitPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12233,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Field basket.item.unitPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12234,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Bad value for basket.item.unitPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12235,
+            "field": "basket.item.quantity",
+            "message": "Field basket.item.quantity is missing. Expected: positive integer between 1 and 9999999."
+          },
+          {
+            "code": 12236,
+            "field": "basket.item.quantity",
+            "message": "Bad value for basket.item.quantity. Expected: positive integer between 1 and 9999999."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsGetErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12101,
+            "field": "orderId",
+            "message": "An Order with specified id can not be found. Expected: A valid string identifier representing an Order object between 1 and 255 characters."
+          },
+          {
+            "code": 14101,
+            "field": "transactionId",
+            "message": "A Transaction with specified id can not be found. Expected: A valid string identifier representing a Transaction object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsPatchErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12101,
+            "field": "orderId",
+            "message": "An Order with specified id can not be found. Expected: A valid string identifier representing an Order object between 1 and 255 characters."
+          },
+          {
+            "code": 14101,
+            "field": "transactionId",
+            "message": "A Transaction with specified id can not be found. Expected: A valid string identifier representing a Transaction object between 1 and 255 characters."
+          },
+          {
+            "code": 12200,
+            "field": "initialAmount",
+            "message": "Field initialAmount is missing.  Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12201,
+            "field": "initialAmount",
+            "message": "Bad value for initialAmount. Expected: Positive integer between 1 and 999999999999999999."
+          },
+          {
+            "code": 12202,
+            "field": "currency",
+            "message": "Field currency is missing. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12203,
+            "field": "currency",
+            "message": "Bad value for currency. Expected: string value in ['EUR']."
+          },
+          {
+            "code": 12217,
+            "field": "description",
+            "message": "Bad value for description. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12219,
+            "field": "basket",
+            "message": "Field basket is missing. Expected: array of type Item."
+          },
+          {
+            "code": 12220,
+            "field": "basket",
+            "message": "Bad value for basket. Expected: array of type Item."
+          },
+          {
+            "code": 12221,
+            "field": "basket.item.name",
+            "message": "Field basket.item.name is missing. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12222,
+            "field": "basket.item.name",
+            "message": "Bad value for basket.item.name. Expected: string of length between 1 and 128."
+          },
+          {
+            "code": 12223,
+            "field": "basket.item.articleNumber",
+            "message": "Field basket.item.articleNumber is missing. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12224,
+            "field": "basket.item.articleNumber",
+            "message": "Bad value for basket.item.articleNumber. Expected: string of length between 1 and 255."
+          },
+          {
+            "code": 12225,
+            "field": "basket.item.totalPrice",
+            "message": "Field basket.item.totalPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12226,
+            "field": "basket.item.totalPrice",
+            "message": "Bad value for basket.item.totalPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12227,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Field basket.item.totalPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12228,
+            "field": "basket.item.totalPriceWithTax",
+            "message": "Bad value for basket.item.totalPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12229,
+            "field": "basket.item.tax",
+            "message": "Field basket.item.tax is missing. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12230,
+            "field": "basket.item.tax",
+            "message": "Bad value for basket.item.tax. Expected: positive integer between 1 and 100."
+          },
+          {
+            "code": 12231,
+            "field": "basket.item.unitPrice",
+            "message": "Field basket.item.unitPrice is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12232,
+            "field": "basket.item.unitPrice",
+            "message": "Bad value for basket.item.unitPrice. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12233,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Field basket.item.unitPriceWithTax is missing. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12234,
+            "field": "basket.item.unitPriceWithTax",
+            "message": "Bad value for basket.item.unitPriceWithTax. Expected: Integer between -999999999999999998 and 999999999999999999."
+          },
+          {
+            "code": 12235,
+            "field": "basket.item.quantity",
+            "message": "Field basket.item.quantity is missing. Expected: positive integer between 1 and 9999999."
+          },
+          {
+            "code": 12236,
+            "field": "basket.item.quantity",
+            "message": "Bad value for basket.item.quantity. Expected: positive integer between 1 and 9999999."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsGetAllNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while loading transaction!"
+          },
+          "code": {
+            "type": "number",
+            "example": 14001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsGetAllErrors"
+            }
+          }
+        }
+      },
+      "OrdersTransactionsGetAllErrors": {
+        "type": "array",
+        "example": [
+          {
+            "code": 12101,
+            "field": "orderId",
+            "message": "An Order with specified id can not be found. Expected: A valid string identifier representing an Order object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "OrdersTransactionsCancelPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions/transaction_asdfghjk/cancel"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating order!"
+          },
+          "code": {
+            "type": "number",
+            "example": 12000
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsCancelPostErrors"
+            }
+          }
+        }
+      },
+      "OrdersTransactionsCapturePostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions/transaction_asdfghjk/capture"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating order!"
+          },
+          "code": {
+            "type": "number",
+            "example": 12000
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsCapturePostErrors"
+            }
+          }
+        }
+      },
+      "OrdersTransactionsRefundPostBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions/transaction_asdfghjk/refund"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while creating order!"
+          },
+          "code": {
+            "type": "number",
+            "example": 12000
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsRefundPostErrors"
+            }
+          }
+        }
+      },
+      "OrdersTransactionsGetNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions/transaction_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while loading transaction!"
+          },
+          "code": {
+            "type": "number",
+            "example": 14001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsGetErrors"
+            }
+          }
+        }
+      },
+      "OrdersTransactionsPatchBadRequest": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/orders/order_asdfghjk/transactions/transaction_asdfghjk"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating transaction!"
+          },
+          "code": {
+            "type": "number",
+            "example": 14002
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersTransactionsPatchErrors"
+            }
+          }
+        }
+      },
+      "CaptureResponse": {
+        "title": "CaptureResponse",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TransactionResponseParent"
+          }
+        ]
+      },
+      "CustomerResponse": {
+        "title": "CustomerResponse",
+        "required": [
+          "customerId",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by payengine"
+          },
+          "email": {
+            "type": "string",
+            "description": "The customers email address. unique.",
+            "format": "email"
+          },
+          "merchantCustomerId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the customer. Created by you."
+          },
+          "addresses": {
+            "type": "array",
+            "description": "A list of all underlying addresses which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/AddressResponse"
+            }
+          },
+          "personas": {
+            "type": "array",
+            "description": "A list of all underlying personas which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/PersonaResponse"
+            }
+          },
+          "paymentInstruments": {
+            "type": "array",
+            "description": "A list of all underlying paymentinstruments which are connected to the customer.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentInstrumentResponse"
+            }
+          }
+        }
+      },
+      "AddressResponse": {
+        "title": "AddressResponse",
+        "required": [
+          "addressId",
+          "createdAt",
+          "modifiedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "addressId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the address. Created by payengine"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this address.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this address.",
+            "format": "date-time"
+          },
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this address. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this address. limited to 35 characters!"
+          },
+          "street": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string",
+            "description": "The street of this address."
+          },
+          "houseNumber": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The housenumber of the street."
+          },
+          "city": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "zip": {
+            "maxLength": 10,
+            "minLength": 3,
+            "type": "string",
+            "description": "The zip of the address."
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string",
+            "description": "The country of the address. Format [https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2]"
+          },
+          "state": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The state of the address."
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the address. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the address. limited to 16 characters!"
+          },
+          "mobile": {
+            "type": "string",
+            "description": "The mobile of the address. limited to 16 characters!"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the address."
+          },
+          "additionalDetails": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional details for this address. This is a form free descriptor."
+          }
+        }
+      },
+      "PersonaResponse": {
+        "title": "PersonaResponse",
+        "required": [
+          "createdAt",
+          "modifiedAt",
+          "personaId"
+        ],
+        "type": "object",
+        "properties": {
+          "personaId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the persona. Created by payengine"
+          },
+          "createdAt": {
+            "type": "number",
+            "description": "This timestamp indicates the creation of this persona.",
+            "format": "date-time"
+          },
+          "modifiedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the last modification of this persona.",
+            "format": "date-time"
+          },
+          "firstName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The firstname of this persona. limited to 35 characters!"
+          },
+          "lastName": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The lastname of this persona. limited to 35 characters!"
+          },
+          "phone": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The phone of the persona. limited to 16 characters!"
+          },
+          "mobile": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The mobile of the persona. limited to 16 characters!"
+          },
+          "fax": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "The fax of the persona. limited to 16 characters!"
+          },
+          "birthday": {
+            "type": "number",
+            "description": "The birthday of the persona. Format as milliseconds since epoch representing UTC Date.",
+            "format": "date-time"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderBaseTypeEnum"
+          },
+          "title": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string",
+            "description": "The title of the persona."
+          }
+        }
+      },
+      "GenderBaseTypeEnum": {
+        "title": "GenderBaseTypeEnum",
+        "type": "string",
+        "description": "The gender of the persona.",
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      },
+      "Item": {
+        "title": "Item",
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "The articles name used in your shop."
+          },
+          "articleNumber": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The articles number used in your shop."
+          },
+          "totalPrice": {
+            "maximum": 1000000000000000000,
+            "minimum": -1000000000000000000,
+            "type": "number",
+            "description": "The total price for this item excluding taxes. The total amount should be given as smallest currency unit.",
+            "format": "int"
+          },
+          "totalPriceWithTax": {
+            "maximum": 1000000000000000000,
+            "minimum": -1000000000000000000,
+            "type": "number",
+            "description": "The total price for this item including taxes. The total amount should be given as smallest currency unit. If the item is of type discount, the value must be negative: min -999999999999999998, max -1.",
+            "format": "int"
+          },
+          "unitPrice": {
+            "maximum": 1000000000000000000,
+            "minimum": -1000000000000000000,
+            "type": "number",
+            "description": "The unit price for this item excluding taxes. The unit amount should be given as smallest currency unit.",
+            "format": "int"
+          },
+          "unitPriceWithTax": {
+            "maximum": 1000000000000000000,
+            "minimum": -1000000000000000000,
+            "type": "number",
+            "description": "The unit price for this item including taxes. The unit amount should be given as smallest currency unit.",
+            "format": "int"
+          },
+          "tax": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "description": "The tax rate for the corresponding item. Will be returned in float format only if scale part contains no trailing zeros. 10.99 -> 10.99 10.90 -> 10.9 10.00 -> 10 10.0 -> 10 10 -> 10",
+            "format": "float"
+          },
+          "quantity": {
+            "minimum": 1,
+            "type": "number",
+            "description": "The quantity for this item.",
+            "format": "int"
+          },
+          "discount": {
+            "maximum": -1,
+            "minimum": -1000000000000000000,
+            "type": "number",
+            "description": "item specific discount",
+            "format": "int"
+          },
+          "articleType": {
+            "$ref": "#/components/schemas/ArticleTypeEnum"
+          }
+        }
+      },
+      "MetaRequest": {
+        "title": "MetaRequest",
+        "type": "object",
+        "properties": {
+          "invoicing": {
+            "$ref": "#/components/schemas/Invoicing"
+          },
+          "preferredLanguage": {
+            "maxLength": 2,
+            "type": "string",
+            "description": "Works with RatePay, iDEAL, Alipay, Bancontact, Union Pay and WeChat Pay. Two-letter language code, lower case."
+          },
+          "referenceId": {
+            "maxLength": 255,
+            "type": "string",
+            "description": "RatePAY specific parameter."
+          },
+          "addressOverride": {
+            "type": "boolean",
+            "description": "Paypal specific parameter. If false the shipping address passed with the request will be editable on the paypal site. Default value is true."
+          },
+          "fraudNetId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Paypal specific parameter. Verifies that the payment originates from a valid, user-consented device and application."
+          },
+          "tan": {
+            "type": "string",
+            "description": "Second factor for online bank transfer based refunds"
+          },
+          "mobileView": {
+            "type": "boolean",
+            "description": "Set to true for the mobile enabled variant of Alipay."
+          },
+          "edccId": {
+            "type": "string",
+            "description": "The ID of the eDCC offer to be used for currency conversion. Applicable only for credit card orders",
+            "example": "Edcc-cbc6ffd8-6417-49ee-92c1-121fe1e19b20"
+          },
+          "cardAcquirerRoutingTo": {
+            "$ref": "#/components/schemas/CardAcquirerRoutingToEnum"
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "The terminalId of the POS terminal, mandatory for POS Auth UP operation.",
+            "example": "69038411"
+          },
+          "printerReady": {
+            "type": "boolean",
+            "description": "Indicates if the receipt printer is ready to use, mandatory for POS Auth UP operation.",
+            "example": true
+          }
+        },
+        "description": "Contains specific information for different payment methods."
+      },
+      "TransactionType": {
+        "title": "TransactionType",
+        "type": "string",
+        "description": "the type of the transaction",
+        "enum": [
+          "PREAUTH",
+          "DEBIT",
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ]
+      },
+      "TransactionStatesBaseTypeEnum": {
+        "title": "TransactionStatesBaseTypeEnum",
+        "type": "string",
+        "description": "The current status of the transaction.\nThe status can be one of the following.\nCREATED, PENDING, IN_PROGRESS, OK, SUCCESS, FAILURE, DECLINED, ABORTED, EXPIRED\n",
+        "enum": [
+          "CREATED",
+          "PENDING",
+          "IN_PROGRESS",
+          "OK",
+          "SUCCESS",
+          "FAILURE",
+          "DECLINED",
+          "ABORTED",
+          "EXPIRED"
+        ]
+      },
+      "Challange": {
+        "title": "Challange",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the prepayment TAN challange (can be displayed in the TAN form)\n"
+          },
+          "label": {
+            "type": "string",
+            "description": "The label of the prepayment tan challange (can be displayed in the TAN form)\n"
+          },
+          "format": {
+            "type": "string",
+            "description": "The TAN format for prepayment (iTAN, photoTAN, etc.)\n"
+          },
+          "data": {
+            "type": "string",
+            "description": "Optional data field for prepayment is needed for some TAN formats e.g. photoTAN\n"
+          }
+        },
+        "description": "Contains payment method specifc meta data. For prepayment TAN instructions.\n"
+      },
+      "TransactionMeta": {
+        "title": "TransactionMeta",
+        "type": "object",
+        "properties": {
+          "tanSent": {
+            "type": "boolean",
+            "description": "Flag which indicates if the TAN was sent to the bank\n"
+          },
+          "tanSchema": {
+            "type": "string",
+            "description": "The TAN schema which was used to finalize a online bank transfer based refund\n"
+          }
+        },
+        "description": "Contains payment method specifc meta data. For prepayment TAN instructions.\n"
+      },
+      "Tracking": {
+        "title": "Tracking",
+        "type": "object",
+        "properties": {
+          "trackingId": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "DPD",
+              "GLS",
+              "DHL",
+              "HLG",
+              "HVS",
+              "UPS",
+              "TNT",
+              "OTH"
+            ]
+          }
+        }
+      },
+      "OrderStatesBaseTypeEnum": {
+        "title": "OrderStatesBaseTypeEnum",
+        "type": "string",
+        "description": "The current status of the order\nIt can be one of the following\nCREATED, OPEN, CLOSED\nA order remains open until the initial amount has been refunded or cancelled.\n",
+        "enum": [
+          "CREATED",
+          "OPEN",
+          "CLOSED"
+        ]
+      },
+      "ChannelsBaseTypeEnum": {
+        "title": "ChannelsBaseTypeEnum",
+        "type": "string",
+        "description": "The channel determine the kind of origin for this order. (optional, mandatory for creditcard, ratepay-invoice, ratepay-directdebit and ratepay-installment)",
+        "enum": [
+          "MOTO",
+          "ECOM"
+        ]
+      },
+      "PaymentInstrumentResponse": {
+        "title": "PaymentInstrumentResponse",
+        "required": [
+          "attributes",
+          "merchantPaymentInstrumentId",
+          "origin",
+          "paymentInstrumentId",
+          "recurring",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentInstrumentId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the paymentinstrument. Created by payengine"
+          },
+          "merchantPaymentInstrumentId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the paymentinstrument on your system. Created by you. limited to 100 characters."
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ProductsBaseTypeEnum"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PaymentInstrumentType"
+          },
+          "recurring": {
+            "type": "boolean",
+            "description": "This flag indicates if this paymentinstrument can be used for recurring payments."
+          },
+          "createdAt": {
+            "type": "integer",
+            "description": "Timestamp when it was created"
+          },
+          "modifiedAt": {
+            "type": "integer",
+            "description": "Timestamp when it was last updated"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "cofContracts": {
+                "type": "array",
+                "description": "For CreditCard only",
+                "items": {
+                  "$ref": "#/components/schemas/CofContractResponse"
+                }
+              },
+              "customerRelationUuid": {
+                "type": "string",
+                "description": "For TWINT only. Recognition of a returning customer."
+              }
+            },
+            "description": "Additional attributes of this paymentinstrument. E.g. masked bank- or creditcarddata.<br> For Klarna we will have possibleTypes object in the response (e.g. klarna-pay-now, klarna-pay-later, klarna-slice-it)<br> Also we will have country, and locale.<br> For PPRO payments methods we could have accountHolder (if one was used for making the transaction)"
+          }
+        },
+        "description": "The paymentinstrument which has been used to process this order. note: If no paymentinstrument has been submitted, one has been created with your submitted data."
+      },
+      "ProductsBaseTypeEnum": {
+        "title": "ProductsBaseTypeEnum",
+        "type": "string",
+        "description": "The product used to create this order. (mandatory)",
+        "enum": [
+          "creditcard",
+          "paypal",
+          "paydirekt",
+          "ratepay-invoice",
+          "ratepay-directdebit",
+          "ratepay-installment",
+          "sepa",
+          "sofort",
+          "klarna-pay-now",
+          "klarna-pay-later",
+          "klarna-slice-it",
+          "prepayment",
+          "giropay",
+          "eps",
+          "ideal",
+          "alipay",
+          "bancontact",
+          "wechat-pay",
+          "postfinance-card",
+          "payu",
+          "paysafecard",
+          "twint",
+          "union-pay"
+        ]
+      },
+      "InitialTransactionTypeBaseTypeEnum": {
+        "title": "InitialTransactionTypeBaseTypeEnum",
+        "type": "string",
+        "description": "The type of the underlying Transaction",
+        "enum": [
+          "PREAUTH",
+          "DEBIT"
+        ]
+      },
+      "DeviceIdentRequest": {
+        "title": "DeviceIdentRequest",
+        "type": "object",
+        "properties": {
+          "deviceIdentToken": {
+            "maxLength": 128,
+            "type": "string"
+          }
+        }
+      },
+      "CreditCardCreditMeta": {
+        "title": "CreditcardCreditMetaRequest",
+        "type": "object",
+        "properties": {
+          "instant": {
+            "type": "boolean",
+            "description": "Indicator if the credit should be instant e.g. visa oct"
+          }
+        }
+      },
+      "ArticleTypeEnum": {
+        "title": "ArticleTypeEnum",
+        "type": "string",
+        "description": "This is the type of the article. Required for Klarna and optional for all other payment methods.",
+        "enum": [
+          "physical",
+          "digital",
+          "discount",
+          "shipping_fee",
+          "gift_card"
+        ]
+      },
+      "Invoicing": {
+        "title": "Invoicing",
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Merchant supplied unique reference on transaction level. Valid for PayPal and Creditcard only. For Creditcard minLength is limited to 30 characters."
+          },
+          "invoiceDate": {
+            "type": "integer",
+            "description": "Timestamp - earliest - 7 days before request, latest - day of request. Valid for PayPal only."
+          },
+          "deliveryDate": {
+            "type": "integer",
+            "description": "Timestamp - earliest - 365 days before request, latest - 365 days after request. Valid for PayPal only."
+          },
+          "dueDate": {
+            "type": "integer",
+            "description": "Timestamp - not before date of request AND not before invoice-date (if present). Valid for PayPal only."
+          }
+        }
+      },
+      "CardAcquirerRoutingToEnum": {
+        "title": "cardAcquirerRoutingToEnum",
+        "type": "string",
+        "description": "Card specific parameter: The acquirer the card transaction should be routed to. This flagging can only be used if more than one acquirer is enabled for the merchant account.",
+        "enum": [
+          "concardis",
+          "nets"
+        ]
+      },
+      "PaymentInstrumentType": {
+        "title": "PaymentInstrumentType",
+        "type": "string",
+        "description": "the type of the payment instrument",
+        "enum": [
+          "sepa",
+          "creditcard",
+          "paypal",
+          "paydirekt",
+          "bank-transfer"
+        ]
+      },
+      "CofContractResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the COF contract of the payment instrument.\nIn case more than one COF type should be used for one paymentInstrument this identifier should be stored by the merchant and referenced in the payment transactions.",
+            "example": "contract_123abc456x"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CofContractTypeEnum"
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel (entry mode) via which the COF initial storage transaction is processed.\nIf not passed it defaults to ECOM.",
+            "example": "ECOM",
+            "enum": [
+              "ECOM",
+              "MOTO"
+            ]
+          },
+          "recurringExpiry": {
+            "type": "string",
+            "description": "Date after which no further authorizations shall be performed. This field is only required in case of an authentication for recurring payments.",
+            "format": "date",
+            "example": "2019-07-10T00:00:00.000Z"
+          },
+          "recurringFrequency": {
+            "type": "number",
+            "description": "Indicates the minimum number of days between authorizations. This field is only required in case of an authentication for recurring payments.",
+            "example": 30
+          }
+        },
+        "description": "The credentials on file (COF) contract object specifying the COF usage of the payment instrument. The presence of this object triggers an zero amount authorization (card check) for the given channel and type."
+      },
+      "DeviceIdentResponse": {
+        "title": "DeviceIdentResponse",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "fraudscore": {
+            "type": "number"
+          },
+          "fraudscoreRaw": {
+            "type": "number"
+          },
+          "ruleScores": {
+            "type": "string"
+          },
+          "fraudscoreRulematches": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "regioncode": {
+            "type": "string"
+          },
+          "continent": {
+            "type": "string"
+          },
+          "countryname": {
+            "type": "string"
+          },
+          "regionname": {
+            "type": "string"
+          },
+          "countrycode": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "exactidCreated": {
+            "type": "string"
+          },
+          "smartidCreated": {
+            "type": "string"
+          },
+          "exactid": {
+            "type": "string"
+          },
+          "confidencelevel": {
+            "type": "number"
+          },
+          "smartid": {
+            "type": "string"
+          },
+          "confidencelevelhistory": {
+            "type": "number"
+          },
+          "verifiedOs": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "languages": {
+            "type": "string"
+          }
+        }
+      },
+      "OrderMetaInfResponse": {
+        "title": "OrderMetaInfResponse",
+        "type": "object",
+        "properties": {
+          "deferred": {
+            "type": "boolean",
+            "description": "Indicates if the order is marked as deferred. Available only for paypal."
+          },
+          "emailSubject": {
+            "type": "string",
+            "description": "Available only for paypal. The subject line of the email that PayPal sends when the transaction is completed."
+          },
+          "receiverType": {
+            "type": "string",
+            "description": "Available only for paypal. Indicates how you identify the recipients of payments in this call to MassPay."
+          },
+          "receiverEmail": {
+            "type": "string",
+            "description": "Available only for paypal. Email address of recipient."
+          },
+          "receiverPhone": {
+            "type": "string",
+            "description": "Available only for paypal. Mobile phone number of recipient."
+          },
+          "receiverId": {
+            "type": "string",
+            "description": "Available only for paypal. Unique PayPal customer account number."
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "Available only for RatePay, iDEAL, Alipay, Bancontact, Union Pay and WeChat Pay."
+          },
+          "mobileView": {
+            "type": "boolean",
+            "description": "Available only for Alipay."
+          },
+          "qrCode": {
+            "type": "string",
+            "description": "Available only for TWINT. Image of the pairing token as a QR code (PNG image in base-64 encoding)."
+          },
+          "token": {
+            "type": "string",
+            "description": "Available only for TWINT. Numeric token to establish the pairing between the customer and cash register."
+          },
+          "cofContract": {
+            "$ref": "#/components/schemas/CofContractResponse"
+          },
+          "externalCofData": {
+            "$ref": "#/components/schemas/ExternalCofData"
+          },
+          "schemeTraceId": {
+            "type": "string",
+            "description": "Scheme Trace ID or transaction reference returned by the card scheme for each authorization. This value can be used in subsequent MIT payments if the credential on file handling is not done by the Payengine but externally. See 'externalCofData.initialSchemeTraceId' description.",
+            "example": "123456789012345"
+          },
+          "threeDsData": {
+            "type": "object",
+            "properties": {
+              "authenticationResult": {
+                "$ref": "#/components/schemas/AuthenticationResult"
+              }
+            }
+          },
+          "edccData": {
+            "type": "object",
+            "properties": {
+              "edccId": {
+                "type": "string",
+                "description": "The ID of the eDCC offer to be used for currency conversion",
+                "example": "Edcc-cbc6ffd8-6417-49ee-92c1-121fe1e19b20"
+              },
+              "foreignAmount": {
+                "type": "number",
+                "description": "The foreign amount, to which the baseAmount is converted\n",
+                "format": "int",
+                "example": 13920
+              },
+              "marginPercentage": {
+                "type": "number",
+                "format": "int",
+                "example": 3
+              },
+              "rate": {
+                "type": "number",
+                "description": "The conversion rate used to convert the baseAmount to the foreignCurrency",
+                "format": "float",
+                "example": 1.1276
+              },
+              "baseCurrency": {
+                "type": "string",
+                "description": "The string currency code of the base currency",
+                "example": "EUR"
+              },
+              "foreignCurrency": {
+                "type": "string",
+                "description": "The string currency code of the foreign currency",
+                "example": "USD"
+              }
+            },
+            "description": "Details about the eDCC offer used in the order"
+          },
+          "cardAcquirerRoutingTo": {
+            "$ref": "#/components/schemas/CardAcquirerRoutingToEnum"
+          },
+          "instant": {
+            "type": "boolean",
+            "description": "Indicator if the credit should be instant e.g. visa oct"
+          }
+        }
+      },
+      "CofContractTypeEnum": {
+        "title": "CofContractTypeEnum",
+        "type": "string",
+        "description": "Credential on file type:\n   * `ONECLICK` - The payment instrument is persisted, recurring and can be used for oneClick payments.\n   * `UNSCHEDULED` - The payment instrument is persisted, recurring and can be used for merchant initiated unscheduled orders.\n   * `SCHEDULED` - The payment instrument is persisted, recurring and can be used for merchant initiated scheduled or instalments orders.",
+        "enum": [
+          "ONECLICK",
+          "UNSCHEDULED",
+          "SCHEDULED"
+        ]
+      },
+      "ExternalCofData": {
+        "title": "Merchant managed external COF contract data",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ExternalCofContractTypeEnum"
+          },
+          "initialSchemeTraceId": {
+            "maxLength": 15,
+            "minLength": 13,
+            "type": "string",
+            "description": "The initial Trace ID that was used for the MIT (merchant initiated transaction) mandate setup. This reference will be used by the card schemes to trace back the strong customer authentication that was provided with the initial CIT (cardholder initiated transaction) of the credential on file setup. The value should only be used if the handling of the CIT was done externally outside of the Payengine. Mandatory for subsequent MIT transactions.\n\nIf no schemeTraceId is available, the payengine allows this field to be null, initially. The response meta will contain a new 'schemeTraceId' provided by the credit card scheme which is to be supplied in subsequent order requests in this property.",
+            "example": "123456789012345"
+          }
+        }
+      },
+      "AuthenticationResult": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Parameter indicating the version of the 3DS",
+            "example": "2.0"
+          },
+          "status": {
+            "type": "string",
+            "description": "Indicates whether a transaction qualifies as an authenticated transaction.<br/><br/> Y = authentication verificationsuccessful<br/> A = authentication attempted; not authenticated, but a proof of attempted authentication is provided<br/> C = challenge required; additional SCA authentication is required<br/> U = authentication could not be performed; technical or other problem<br/> R = authentication rejected; issuer is rejecting<br/> N = not authenticated; transaction denied",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "A",
+              "C",
+              "U",
+              "R",
+              "N"
+            ]
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "Conditional - present in case of 3DS 1.0 and challenge flow for 3DS 2.0 redirect URL leading to hosted page by Payengine used for Cardholder authentication (main flow for 3DS 1.0 and fallback flow in case of challenge for 3DS 2.0)",
+            "example": "https://link-the-hosted-challange.example"
+          },
+          "challengeData": {
+            "$ref": "#/components/schemas/ChallengeData"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "The transaction identifier from the 3DS authentication\n3DS 1.0: This will be the XID\n3DS 2.0: This will be the dsTransID",
+            "example": "d00b8de2-a2e4-11e9-a2a3-2a2ae2dbcce4"
+          },
+          "acsReferenceNumber": {
+            "type": "string",
+            "description": "Unique identifier assigned by the EMVCo Secretariat upon Testing and Approval. Set by the EMVCo Secretariat."
+          },
+          "acsSignedContent": {
+            "type": "string",
+            "description": "Contains the JWS object (represented as a string) created by the ACS for the ARes message. The body of JWS object (represented as a string) will contain the following data elements as defined • ACS URL • ACS Ephemeral Public Key (QT) • SDK Ephemeral Public Key (QC)"
+          },
+          "acsTransactionId": {
+            "type": "string",
+            "description": "Universally Unique transaction identifier assigned by the ACS to identify a single transaction. Canonical format as defined in IETF RFC 4122. May utilise any of the specified versions if the output meets specified requirements."
+          },
+          "authenticationValue": {
+            "type": "string",
+            "description": "The authenticationValue returned in the 3DS authentication\nCAVV: Visa, AMEX, JCB, Diners/Discover\nUCAF: Mastercard",
+            "example": "YXV0aGVudGljYXRpb25WYWx1ZQ=="
+          },
+          "cardholderInfo": {
+            "type": "string",
+            "description": "Statement about the result of the 3DS authentication."
+          },
+          "eci": {
+            "type": "string",
+            "description": "The Electronic Commerce Indicator (ECI) provided by the ACS or DS to indicate the results of the attempt to authenticate the cardholder. The ECI values might differ depending on the card scheme.<br/> For all fully authenticated or authentication attempted transactions the liability will be shifted to the card issuer.<br/><br/> Mastercard<br/>\n  00 - fully authenticated<br/>\n  01 - authentication attempted<br/>\n  02 - no authentication available<br/>\n  07 - fully authenticated&#42;<sup>1</sup><br/><br/>\nAll other card schemes<br/>\n  05 - fully authenticated<br/>\n  06 - authentication attempted<br/>\n  07 - no authentication available<br/><br/>\n&#42;<sup>1</sup> - Mastercard distinguishes between fully authenticated recurring payments (flagged with ECI 07) and all other fully authenticated transactions (flagged with ECI 00).",
+            "example": "05"
+          },
+          "statusReason": {
+            "type": "string",
+            "description": "Reason why the authenticationResult.status field has the specified value.<br/> 01 = Card authentication failed<br/> 02 = Unknown Device<br/> 03 = Unsupported Device<br/> 04 = Exceeds authentication frequency limit<br/> 05 = Expired card<br/> 06 = Invalid card number<br/> 07 = Invalid transaction<br/> 08 = No Card record<br/> 09 = Security failure<br/> 10 = Stolen card<br/> 11 = Suspected fraud<br/> 12 = Transaction not permitted to cardholder<br/> 13 = Cardholder not enrolled in service<br/> 14 = Transaction timed out at the ACS<br/> 15 = Low confidence<br/> 16 = Medium confidence<br/> 17 = High confidence<br/> 18 = Very High confidence<br/> 19 = Exceeds ACS maximum challenges<br/> 20 = Non-Payment transaction not supported<br/> 21 = 3RI transaction not supported<br/> 22 = ACS technical issue<br/> 23 = Decoupled Authentication required by ACS but not requested by 3DS Requestor<br/> 24 = 3DS Requestor Decoupled Max Expiry Time exceeded<br/> 25 = Decoupled Authentication was provided insufficient time to authenticate cardholder. ACS will not make attempt<br/> 26 = Authentication attempted but not performed by the cardholder<br/> 27–79 = Reserved for EMVCo future use (values invalid until defined by EMVCo)<br/> 80–99 = Reserved for DS use<br/>",
+            "example": "01"
+          },
+          "forceChallenge": {
+            "type": "boolean",
+            "description": "Flag to force challenge for 3ds v2",
+            "example": true
+          },
+          "errorDetails": {
+            "$ref": "#/components/schemas/AuthenticationResultErrorData"
+          }
+        },
+        "description": "Object containing the result of the 3DS authentication transaction (final results will be available only in case of frictionless flow)"
+      },
+      "ExternalCofContractTypeEnum": {
+        "title": "ExternalCofContractTypeEnum",
+        "type": "string",
+        "description": "The type of the credential on file usage.\n   * `UNSCHEDULED` - The payment credentials can be used for merchant initiated unscheduled orders.\n   * `SCHEDULED` - The payment credentials can be used for merchant initiated scheduled orders.",
+        "enum": [
+          "UNSCHEDULED",
+          "SCHEDULED"
+        ]
+      },
+      "ChallengeData": {
+        "type": "object",
+        "properties": {
+          "acsUrl": {
+            "type": "string",
+            "description": "Fully qualified URL of the ACS in case the authentication response message indicates that further cardholder interaction is required to complete the authentication. relevant for 3DS 2.0 only",
+            "example": "https://link-to-the-issuer.acs"
+          },
+          "base64EncodedChallengeRequest": {
+            "type": "string",
+            "description": "Base64-encoded Challenge Request object in case the authentication response message indicates that further Cardholder interaction is required to complete the authentication. (3DS 2.0)",
+            "example": "Y2hhbGxhbmdlRGF0YQ=="
+          },
+          "challengeWindowSize": {
+            "type": "string",
+            "description": "Dimensions of the challenge iframe window in which the challenge page will be displayed to the Cardholder. This value should match the provided size in the browserInfo call.\nEMVCo assigned window size.\n'01' -> 250px x 400px,\n'02' -> 390px x 400px,\n'03' -> 500px x 600px,\n'04' -> 600px x 400px,\n'05' -> Full screen, or full container content\nrelevant for 3DS 2.0 only",
+            "example": "05",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05"
+            ]
+          }
+        },
+        "description": "Conditional - information available in case of CHALLENGE status, needed for building the challenge iFrame."
+      },
+      "AuthenticationResultErrorData": {
+        "type": "object",
+        "properties": {
+          "providerCode": {
+            "type": "string",
+            "description": "Original error code from the 3DS server or mpi",
+            "example": "301"
+          },
+          "providerMessage": {
+            "type": "string",
+            "description": "Original error message from the 3DS server or mpi",
+            "example": "TRANSACTION_ID_NOT_RECOGNIZED"
+          }
+        },
+        "description": "Object containing error information in case of error."
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      }
+    }
+  }
+}
