@@ -35,6 +35,16 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PaymentInstrumentRequest"
+              },
+              "example": {
+                "type": "creditcard",
+                "payment": {
+                  "cardNumber": 4111111111111111,
+                  "verification": 123,
+                  "expiryMonth": 12,
+                  "expiryYear": 21,
+                  "cardHolder": "Max Mustermann"
+                }
               }
             }
           },
@@ -47,6 +57,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PaymentInstrumentResponse"
+                },
+                "example": {
+                  "createdAt": 1627979362448,
+                  "modifiedAt": 1627979362467,
+                  "paymentInstrumentId": "paymentinstrument_obgx6tkpgw",
+                  "merchantPaymentInstrumentId": null,
+                  "attributes": {
+                    "cardHolder": "Max Mustermann",
+                    "cardNumber": "************1111",
+                    "brand": "VISA",
+                    "expiryMonth": "12",
+                    "expiryYear": "21",
+                    "issuerCountry": "US",
+                    "cofContracts": [
+                      {
+                        "id": "contract_123abc456x",
+                        "type": "ONECLICK",
+                        "channel": "ECOM",
+                        "recurringExpiry": "2024-07-10T00:00:00.000Z",
+                        "recurringFrequency": 30
+                      }
+                    ],
+                    "uniqueId": "E411111JXVUXPEN1111_202112"
+                  },
+                  "encrypted": true,
+                  "origin": "creditcard",
+                  "type": "creditcard",
+                  "recurring": true
                 }
               }
             }
@@ -64,7 +102,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "basicAuth": []
           }
         ],
         "x-codegen-request-body-name": "body"
@@ -83,6 +121,74 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PaymentInstrumentList"
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "createdAt": 1627979362448,
+                      "modifiedAt": 1627979362467,
+                      "paymentInstrumentId": "paymentinstrument_obgx6tkpgw",
+                      "merchantPaymentInstrumentId": null,
+                      "attributes": {
+                        "cardHolder": "Max Mustermann",
+                        "cardNumber": "************1111",
+                        "brand": "VISA",
+                        "expiryMonth": "12",
+                        "expiryYear": "21",
+                        "issuerCountry": "US",
+                        "cofContracts": [
+                          {
+                            "id": "contract_123abc456x",
+                            "type": "ONECLICK",
+                            "channel": "ECOM",
+                            "recurringExpiry": "2024-07-10T00:00:00.000Z",
+                            "recurringFrequency": 30
+                          }
+                        ],
+                        "uniqueId": "E411111JXVUXPEN1111_202112"
+                      },
+                      "encrypted": true,
+                      "origin": "creditcard",
+                      "type": "creditcard",
+                      "recurring": true
+                    },
+                    {
+                      "createdAt": 1608115385368,
+                      "modifiedAt": 1608115385395,
+                      "paymentInstrumentId": "paymentinstrument_2akpebkxjb",
+                      "merchantPaymentInstrumentId": null,
+                      "attributes": {
+                        "cardHolder": "Max Mustermann",
+                        "cardNumber": "************1111",
+                        "brand": "VISA",
+                        "expiryMonth": "12",
+                        "expiryYear": "21",
+                        "issuerCountry": "US",
+                        "cofContracts": [
+                          {
+                            "id": "CofContract-5b2cae1f-c099-4ad0-9996-9c0ef89058a3",
+                            "type": "ONECLICK",
+                            "channel": "ECOM",
+                            "createdAt": 1608309034612
+                          },
+                          {
+                            "id": "CofContract-da47a529-f829-4628-a99c-a421df14cd17",
+                            "type": "UNSCHEDULED",
+                            "channel": "ECOM",
+                            "createdAt": 1608309992870,
+                            "recurringExpiry": "2050-01-01",
+                            "recurringFrequency": 30
+                          }
+                        ],
+                        "uniqueId": "E411111JXVUXPEN1111_202112"
+                      },
+                      "encrypted": true,
+                      "origin": "creditcard",
+                      "type": "creditcard",
+                      "recurring": true
+                    }
+                  ],
+                  "totalPages": 1
                 }
               }
             }
@@ -121,6 +227,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PaymentInstrumentResponse"
+                },
+                "example": {
+                  "createdAt": 1627979362448,
+                  "modifiedAt": 1627979362467,
+                  "paymentInstrumentId": "paymentinstrument_obgx6tkpgw",
+                  "merchantPaymentInstrumentId": null,
+                  "attributes": {
+                    "cardHolder": "Max Mustermann",
+                    "cardNumber": "************1111",
+                    "brand": "VISA",
+                    "expiryMonth": "12",
+                    "expiryYear": "21",
+                    "issuerCountry": "US",
+                    "cofContracts": [
+                      {
+                        "id": "contract_123abc456x",
+                        "type": "ONECLICK",
+                        "channel": "ECOM",
+                        "recurringExpiry": "2024-07-10T00:00:00.000Z",
+                        "recurringFrequency": 30
+                      }
+                    ],
+                    "uniqueId": "E411111JXVUXPEN1111_202112"
+                  },
+                  "encrypted": true,
+                  "origin": "creditcard",
+                  "type": "creditcard",
+                  "recurring": true
                 }
               }
             }
@@ -166,6 +300,12 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PaymentInstrumentUpdateRequest"
+              },
+              "example": {
+                "verification": "111",
+                "expiryMonth": "01",
+                "expiryYear": "24",
+                "cardHolder": "Max Mustermann"
               }
             }
           },
@@ -178,6 +318,25 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PaymentInstrumentResponse"
+                },
+                "example": {
+                  "createdAt": 1627979362448,
+                  "modifiedAt": 1627979362467,
+                  "paymentInstrumentId": "paymentinstrument_obgx6tkpgw",
+                  "merchantPaymentInstrumentId": null,
+                  "attributes": {
+                    "cardHolder": null,
+                    "cardNumber": null,
+                    "brand": null,
+                    "expiryMonth": null,
+                    "expiryYear": null,
+                    "issuerCountry": null,
+                    "cofContracts": null
+                  },
+                  "encrypted": true,
+                  "origin": "creditcard",
+                  "type": "creditcard",
+                  "recurring": true
                 }
               }
             }
@@ -195,7 +354,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "basicAuth": []
           }
         ],
         "x-codegen-request-body-name": "body"
@@ -266,6 +425,15 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CardcheckRequest"
+              },
+              "example": {
+                "cofContract": {
+                  "type": "UNSCHEDULED",
+                  "channel": "ECOM"
+                },
+                "threeDsData": {
+                  "threeDsAuthenticationId": "Authentication-5eff4f00-7ce1-4cf7-bccb-da40bbc876ef"
+                }
               }
             }
           },
@@ -278,6 +446,25 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CardcheckResponse"
+                },
+                "example": {
+                  "id": "CardCheckRequest-cbc13759-88c9-4d5e-be85-4aa1bb374fb6",
+                  "createdAt": 1561555495930,
+                  "modifiedAt": 1561555495930,
+                  "status": "SUCCESS",
+                  "paymentInstrumentId": "paymentinstrument_fphmcnsets",
+                  "cofContract": {
+                    "id": "CofContract-be02b203-0817-4deb-9fb9-fa4790db1a1c",
+                    "type": "UNSCHEDULED",
+                    "channel": "ECOM",
+                    "createdAt": 1561555495930,
+                    "recurringExpiry": "2050-01-01",
+                    "recurringFrequency": 30
+                  },
+                  "threeDsData": {
+                    "threeDsAuthenticationId": "Authentication-5eff4f00-7ce1-4cf7-bccb-da40bbc876ef"
+                  },
+                  "errorDetails": null
                 }
               }
             }
@@ -1255,11 +1442,6 @@
         "type": "http",
         "scheme": "Basic",
         "description": "Authorization: Basic base64(merchantId:apiKey)"
-      },
-      "Bearer": {
-        "type": "http",
-        "scheme": "Bearer",
-        "description": "Authorization: Bearer merchantId"
       }
     }
   }
