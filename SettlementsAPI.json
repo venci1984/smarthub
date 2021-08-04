@@ -1,0 +1,271 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Settlements API",
+    "description": "Service that provides settlement data"
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Settlements API"
+    }
+  ],
+  "paths": {
+    "/settlements": {
+      "get": {
+        "tags": [
+          "Settlements API"
+        ],
+        "summary": "Get list of settlement files\n",
+        "description": "Endpoint to receive a list of available settlement files.\n\nThe following parameters can be used as filter.\n- settlementId - filter the files by their Id\n- receivedAt - current time when the file is received\n- product - filter by different products\n- downloaded - mark the file after first download as “downloaded”. This is just a state and it doesn’t mean that the file could not be anymore downloaded. The file could be downloaded as many times needed and this state just shows that is downloaded at least ones\n- receivedAtAfter - filter by received time after\n- receivedAtBefore - filter by received time before\n- fileFormat - only csv file format is allowed\n- excludeFiles - boolean check that excludes the content of the settlement files to be return in the response\n- settlementType - determine if we wanted to filter by original or unified settlements\n\nThe following parameter names can be used for ordering the results.\n - settlementId\n - product\n - downloaded\n - receivedAt\n - fileFormat\n - settlementType\n",
+        "operationId": "getSettlements",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementsList"
+                },
+                "example": {
+                    "elements": [
+                      {
+                          "createdAt": 1625797945330,
+                          "modifiedAt": 1625797945330,
+                          "id": "settlementdata_x8h3i8hcnp",
+                          "settlementsFile": "GUID der Transaktion,VP-Nummer,Terminal-ID,ARN,Trx.-Datum,Uhrzeit,Autor.-Nr,Trace ID,Merchant Order ID / Order ID,Kredit- Debitindikator,Umsatz in Transaktionswährung (Brutto),Transaktionswährung,Umsatz in Abrechnungswährung (Brutto),Abrechnungswährung,Interchange Fee (Auszahlwährung),Card Scheme Fee (Auszahlwährung),Acquirer Service Fee (Auszahlwährung),MSC Entgelt (Auszahlwährung),Mehrwertsteuer (Auszahlwährung),Umsatz in Abrechnungswährung (Netto),GUID Settlement,Payment Methode,Zahldatum,Sequence Number des Payments,Brand,Brand ID,Map Transaction Type,Settlement Date,Exchange Rate\n0050569E62D01EDBAE909B6B5A1DF879,147636403,52K00024,74627641139002740050207,20210518,093734,,002913,ftx3bpjywe,C,0.0100 ,EUR,0.0100 ,EUR,0.0000 ,0.0000 ,0.0000 ,0.0000 ,0.0000 ,0.0100 ,0050569E62D01EDBB7F79F0E4B83FDD0,L,20210707,000002,VI,S,MERC,20210707,1.0000 ",
+                          "fileFormat": "csv",
+                          "settlementType": "original-format",
+                          "product": "creditcard",
+                          "receivedAt": 1625797945330,
+                          "fileName": "payengine-settlement-2021-07-09-023225.csv",
+                          "downloaded": false,
+                          "merchantId": "merchant_kjrysmfssx"
+                      }
+                    ],
+                    "totalPages": 1
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementsNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    },
+    "/settlements/download": {
+      "get": {
+        "tags": [
+          "Settlements API"
+        ],
+        "summary": "Download settlement file",
+        "description": "Endpoint to download specific settlement files.\n\n\nThe files that should be downloaded have to be referenced via the settlementId in the body of the service request.\n\n\nIn case there is a list of settlementIds the files will be returned as a zip file.\n\n\nIn case only one settlementId is referenced the plain file will be returned.\n",
+        "operationId": "downloadSettlements",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "List of settlement ids",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementsNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SettlementResponse": {
+        "title": "SettlementResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the settlements. Created by payengine"
+          },
+          "settlementsFile": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Settlements file."
+          },
+          "product": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Product"
+          },
+          "receivedAt": {
+            "type": "number",
+            "description": "This timestamp indicates the arrival of this settlement.",
+            "format": "date-time"
+          },
+          "fileName": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the file"
+          },
+          "downloaded": {
+            "type": "boolean",
+            "description": "Mark the file after first download as “downloaded”. The file could be downloaded as many times needed and this state just shows that is downloaded at least ones."
+          },
+          "merchantId": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Merchant Id"
+          }
+        }
+      },
+      "SettlementsList": {
+        "title": "SettlementsList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of settlements.",
+            "items": {
+              "$ref": "#/components/schemas/SettlementResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "SettlementsNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/settlements"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "code": {
+            "type": "number",
+            "example": 50001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettlementsPatchErrors"
+            }
+          }
+        }
+      },
+      "SettlementsPatchErrors": {
+        "title": "Error",
+        "type": "array",
+        "example": [
+          {
+            "code": 50001,
+            "message": "A Settlement with specified id can not be found. Expected: A valid string identifier representing a Settlement object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      }
+    }
+  }
+}
