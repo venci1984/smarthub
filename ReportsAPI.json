@@ -1,0 +1,222 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "v1",
+    "title": "Transaction reports API",
+    "description": "Service that provides transaction report data"
+  },
+  "servers": [
+    {
+      "url": "https://apitest.payengine.de/v1",
+      "description": "Test"
+    },
+    {
+      "url": "https://api.payengine.de/v1",
+      "description": "Live"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Transaction reports API"
+    }
+  ],
+  "paths": {
+    "/report/transaction": {
+      "get": {
+        "tags": [
+          "Transaction reports API"
+        ],
+        "summary": "Get list of transaction report files\n",
+        "description": "Endpoint to receive a list of available transaction report files.\n\nThe following parameters can be used as filter.\n- createdAt\n- createdAtAfter\n- createdAtBefore\n- reportDateAfter\n- reportDateBefore\n- reportDate\n- reportType\n- fileFormat\n\nThe following parameter names can be used for ordering the results.\n- reportDate\n- fileFormat\n",
+        "operationId": "getTransactionReports",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TxReportList"
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "createdAt": 1565748265493,
+                      "modifiedAt": 1565748265493,
+                      "id": "TransactionsReport-eb77c1f1-6515-4a61-ac9a-c2f5e28a4b9c",
+                      "reportType": "daily",
+                      "fileName": "trans-rep-merchant_kjrysmfssx-d-20190813.csv",
+                      "reportDate": 1565661865493,
+                      "fileFormat": "csv"
+                    },
+                    {
+                      "createdAt": 1572584536172,
+                      "modifiedAt": 1572584536172,
+                      "id": "TransactionsReport-ef55e717-ac4a-4611-829f-a1e4f08ed438",
+                      "reportType": "monthly",
+                      "fileName": "trans-rep-merchant_kjrysmfssx-m-201910.csv",
+                      "reportDate": 1572584536172,
+                      "fileFormat": "csv"
+                    },
+                    {
+                      "createdAt": 1583978704337,
+                      "modifiedAt": 1583978704337,
+                      "id": "TransactionsReport-f217bc97-0532-4b89-92bc-b7512e9cf2cf",
+                      "reportType": "daily",
+                      "fileName": "trans-rep-merchant_kjrysmfssx-d-20200311.csv",
+                      "reportDate": 1583884800000,
+                      "fileFormat": "csv"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found caused by invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TxReportNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TxReportList": {
+        "title": "TxReportList",
+        "required": [
+          "elements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "array",
+            "description": "A list of transaction reports.",
+            "items": {
+              "$ref": "#/components/schemas/TxReportResponse"
+            }
+          },
+          "totalPages": {
+            "minimum": 1,
+            "type": "number",
+            "description": "A counter for the total pages returned.",
+            "format": "int"
+          }
+        }
+      },
+      "TxReportNotFound": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "example": "v1/report/transaction"
+          },
+          "timestamp": {
+            "type": "number",
+            "format": "date-time",
+            "example": 1603275671582
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          },
+          "code": {
+            "type": "number",
+            "example": 50001
+          },
+          "globalTrackId": {
+            "type": "string",
+            "example": "Some Request ID"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TxReportPatchErrors"
+            }
+          }
+        }
+      },
+      "TxReportResponse": {
+        "title": "TxReportResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The identifier of the transaction report. Created by payengine"
+          },
+          "reportDate": {
+            "type": "number",
+            "description": "Timestamp indicates the date for which the report was generated and includes the transactions",
+            "format": "date-time"
+          },
+          "fileName": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the file"
+          },
+          "reportType": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "The type of the transaction report ['daily',  'monthly']"
+          },
+          "fileFormat": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Format of the file ['csv', 'xlsx']"
+          }
+        }
+      },
+      "TxReportPatchErrors": {
+        "title": "Error",
+        "type": "array",
+        "example": [
+          {
+            "code": 50001,
+            "message": "A Transaction report with specified id can not be found. Expected: A valid string identifier representing a Transaction report object between 1 and 255 characters."
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "Basic",
+        "description": "Authorization: Basic base64(merchantId:apiKey)"
+      }
+    }
+  }
+}
